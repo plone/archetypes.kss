@@ -1,5 +1,5 @@
 archetypes.kss Package Readme
-=========================
+=============================
 
 Overview
 --------
