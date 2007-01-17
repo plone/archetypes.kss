@@ -1,0 +1,9 @@
+Changelog for archetypes.kss
+
+    (name of developer listed in brackets)
+
+archetypes.kss - 0.1 Unreleased
+
+    - Initial package structure.
+      [zopeskel]
+
