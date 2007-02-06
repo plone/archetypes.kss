@@ -57,7 +57,6 @@ class FieldsViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
 
     def testSaveField(self):
         view = self.view
-        view.stopEventListening()
         result = view.saveField('title', 'My Title')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [

@@ -74,7 +74,6 @@ class ValidationViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
         # Set up a view 
         context = self.portal.testdoc
         view = context.restrictedTraverse('kssValidateForm')
-        view.stopEventListening()
         # this form contains a file field that needs to be ignored. 
         data = {'': 'A kiv\xc3\xa1lasztott elemek elt\xc3\xa1vol\xc3\xadt\xc3\xa1sa', 'allowDiscussion': 'None',
             'cmfeditions_save_new_version': 'false', 'contributors': [],
@@ -108,7 +107,6 @@ class ValidationViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
         # Set up a view 
         context = self.portal.testdoc
         view = context.restrictedTraverse('kssValidateForm')
-        view.stopEventListening()
         # this form contains a file field that needs to be ignored. 
         data = {'': 'A kiv\xc3\xa1lasztott elemek elt\xc3\xa1vol\xc3\xadt\xc3\xa1sa', 'allowDiscussion': 'None',
             'cmfeditions_save_new_version': 'false', 'contributors': [],
@@ -145,7 +143,6 @@ class ValidationViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
         # Set up a view 
         context = self.portal.testfile
         view = context.restrictedTraverse('kssValidateForm')
-        view.stopEventListening()
         # this form contains a file field that needs to be ignored. 
         data = {'': 'A kiv\xc3\xa1lasztott elemek elt\xc3\xa1vol\xc3\xadt\xc3\xa1sa', 'allowDiscussion': 'None',
         'cmfeditions_save_new_version': 'false', 'contributors': [],
