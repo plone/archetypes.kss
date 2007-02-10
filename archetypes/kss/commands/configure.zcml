@@ -4,15 +4,11 @@
     xmlns:kss="http://namespaces.zope.org/kss"
     >
 
-    <adapter 
-      for="plone.app.kss.interfaces.IPloneAzaxView"
-      provides=".interfaces.IValidationCommands"
-      factory=".validation.ValidationCommands"
-      />
-
-    <kss:registerCommandSet
-      name='atvalidation'
-      provides=".interfaces.IValidationCommands"
-      />
+    <kss:commandset
+        name='atvalidation'
+        for="plone.app.kss.interfaces.IPloneAzaxView"
+        provides=".interfaces.IValidationCommands"
+        class=".validation.ValidationCommands"
+        />
 
 </configure>
