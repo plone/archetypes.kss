@@ -132,10 +132,11 @@ class ATFieldDecoratorView(BrowserView):
             # kssFieldClickable:            selector for clickable
             # kssFieldDblClickable:         selector for double clickable
             classstring = ' kukit-atfieldname-%s kukit-widgetstate-%s' % (fieldname, mode)
-            if singleclick:
-                classstring += ' kssFieldClickable'
-            else:
-                classstring += ' kssFieldDblClickable'
+            if mode == 'view':
+                if singleclick:
+                    classstring += ' kssFieldClickable'
+                else:
+                    classstring += ' kssFieldDblClickable'
         else:
             classstring = ''
         return classstring
