@@ -135,7 +135,9 @@ class ATFieldDecoratorView(BrowserView):
     def kss_class(self, fieldname, mode, singleclick=False):
         context = aq_inner(self.context)
         field = context.getField(fieldname)
-        if field.writeable(context):
+        # field can be None when widgets are used without fields
+        # check whether field is valid
+        if field is not None and field.writeable(context):
             # kukit-atfieldname-FIELDNAME:  the generic field marker
             # kukit-widgetstate-STATE:      the widgets's state
             # kssFieldClickable:            selector for clickable
