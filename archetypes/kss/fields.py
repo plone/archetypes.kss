@@ -38,7 +38,7 @@ class FieldsView(AzaxBaseView):
     ## Kss methods
    
     field_wrapper = ZopeTwoPageTemplateFile('browser/field_wrapper.pt')
-    def renderField(self, fieldname, mode='view'):
+    def renderField(self, fieldname, mode='view', macro_path=None):
         """
         This method handles the rendering of a field, it calls either the edit or
         view macro based on the given mode.
@@ -46,36 +46,45 @@ class FieldsView(AzaxBaseView):
         context = self.context
         fieldname = fieldname.split('archetypes-fieldname-')[-1]
         field = context.getField(fieldname)
-        code = field.widget(mode, context)
+        if macro_path:
+            # here/portlet_news/macros/a_macro
+            prefix, macro = tuple(macro_path.split(r'/macros/'))
+            here, path = tuple(prefix.split('/', 1)) 
+            if not here in ['here', 'context']:
+                raise NameError, "First part of the path should be 'here' or 'context'"
+            template = context.restrictedTraverse(path = path)
+            code = template.macros[macro]
+        else:
+            code = field.widget(mode, context)
+
         res = self.field_wrapper(the_macro=code, field=field, instance=context, mode=mode)
         return res
 
-    def replaceFieldHelper(self, fieldname, mode='view'):
+    def replaceFieldHelper(self, fieldname, mode='view', macro_path=None):
         """
         """
-        archetypes_fieldname = "archetypes-fieldname-%s" % fieldname
-        res = self.renderField(fieldname, mode=mode)
+        parent_fieldname = "parent-fieldname-%s" % fieldname
+    
+
+        res = self.renderField(fieldname, mode=mode, macro_path=macro_path)
 
         res = res.strip()
         ksscore = self.getCommandSet('core')
         if mode == 'view':
-            if fieldname == 'title':
-                res = '<h1 id="' + archetypes_fieldname + '" class="documentFirstHeading kukit-atfieldname-%s kukit-widgetstate-view">' % fieldname + res + '</h1>'
-            if fieldname=='description':
-                res = '<p id="' + archetypes_fieldname + '" class="documentDescription kukit-atfieldname-%s kukit-widgetstate-view">' % fieldname + res + '</p>'
-            if fieldname=='text':
-                res = '<div id="' + archetypes_fieldname + '" class="plain kukit-atfieldname-%s kukit-widgetstate-view">' % fieldname + res + '</div>'
-            ksscore.replaceHTML(ksscore.getHtmlIdSelector('azax-inlineform-%s'%fieldname), res)
+            if macro_path is None:        
+                ksscore.replaceHTML(ksscore.getHtmlIdSelector('azax-inlineform-%s'%fieldname), res)
+            else:
+                ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), res)
         if mode == 'edit':
-            ksscore.replaceHTML(ksscore.getHtmlIdSelector(archetypes_fieldname), res)
+            ksscore.replaceInnerHTML(ksscore.getHtmlIdSelector(parent_fieldname), res)
 
-    def replaceField(self, fieldname, mode='view'):
+    def replaceField(self, fieldname, mode='view', macro_path=None):
         """
         """
-        self.replaceFieldHelper(fieldname, mode)
+        self.replaceFieldHelper(fieldname, mode, macro_path)
         return self.render()
 
-    def saveField(self, fieldname, value, mode='view'):
+    def saveField(self, fieldname, value, mode='view', macro_path=None):
         """
         This method saves the current value to the field. and returns the rendered
         view macro.
@@ -107,7 +116,7 @@ class FieldsView(AzaxBaseView):
             descriptor = lifecycleevent.Attributes(IPortalObject, fieldname)
             event.notify(ObjectEditedEvent(self.context, descriptor))
             
-            self.replaceFieldHelper(fieldname=fieldname, mode='view')
+            self.replaceFieldHelper(fieldname=fieldname, mode='view', macro_path=macro_path)
         else:
             if not error:
                 # XXX This should not actually happen...
