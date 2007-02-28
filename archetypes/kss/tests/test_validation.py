@@ -131,10 +131,11 @@ class ValidationViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
                 ('replaceInnerHTML', 'kssPortalMessage', 'htmlid'), 
+                ('setAttribute', 'kssPortalMessage', 'htmlid'),
                 ('setStyle', 'kssPortalMessage', 'htmlid'), 
                 ('clearChildNodes', 'div.field div.fieldErrorBox', 'css'), 
                 ('replaceInnerHTML', 'div#archetypes-fieldname-title div.fieldErrorBox', 'css'),
-                ('setAttribute', 'archetypes-fieldname-title', 'htmlid')
+                ('setAttribute', 'archetypes-fieldname-title', 'htmlid'),
             ])
 
     def testValidateFormWithUploads(self):

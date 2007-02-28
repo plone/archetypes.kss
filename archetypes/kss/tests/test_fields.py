@@ -45,14 +45,14 @@ class FieldsViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
         result = self.view.replaceField('title','view')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
-             ('replaceHTML', 'azax-inlineform-title', 'htmlid'),
+             ('replaceHTML', 'kss-inlineform-title', 'htmlid'),
             ])
 
     def testRenderTitleWithEdit(self):
         result = self.view.replaceField('title','edit')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
-             ('replaceHTML', 'archetypes-fieldname-title', 'htmlid'),
+             ('replaceInnerHTML', 'parent-fieldname-title', 'htmlid'),
             ])
 
     def testSaveField(self):
@@ -60,7 +60,7 @@ class FieldsViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
         result = view.saveField('title', 'My Title')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
-             ('replaceHTML', 'azax-inlineform-title', 'htmlid'),
+             ('replaceHTML', 'kss-inlineform-title', 'htmlid'),
             ])
         self.assertEqual('My Title', self.portal['front-page'].Title())
         res = view.saveField('description', 'Woot a funky description!')

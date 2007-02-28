@@ -72,7 +72,7 @@ class FieldsView(AzaxBaseView):
         ksscore = self.getCommandSet('core')
         if mode == 'view':
             if macro_path is None:        
-                ksscore.replaceHTML(ksscore.getHtmlIdSelector('azax-inlineform-%s'%fieldname), res)
+                ksscore.replaceHTML(ksscore.getHtmlIdSelector('kss-inlineform-%s'%fieldname), res)
             else:
                 ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), res)
         if mode == 'edit':

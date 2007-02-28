@@ -9,18 +9,18 @@
                                n python:{};
                                errors options/state/getErrors | n;
                                accessor python:field.getAccessor(here)"
-            ><form tal:attributes="class string:field azax-inline-field;
-                                   id string:azax-inlineform-$fieldName;"
+            ><form tal:attributes="class string:field kss-inline-field;
+                                   id string:kss-inlineform-$fieldName;"
                    tal:omit-tag="python:mode=='view'"><metal:fieldMacro
                     use-macro="options/the_macro" />
                <div class="formControls"
                     tal:attributes="class string:form-element kssattr-atfieldname-$fieldName"
                     tal:condition="python:mode=='edit'" ><br />
-                 <input name="azax-save"
+                 <input name="kss-save"
                         value="Save" type="button"
                         class="context"
                         tal:omit-tag="python:mode=='view'" />
-                 <input name="azax-cancel"
+                 <input name="kss-cancel"
                         value="Cancel" type="button"
                         class="standalone"
                         tal:omit-tag="python:mode=='view'" />
