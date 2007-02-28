@@ -14,7 +14,7 @@
                    tal:omit-tag="python:mode=='view'"><metal:fieldMacro
                     use-macro="options/the_macro" />
                <div class="formControls"
-                    tal:attributes="class string:form-element kukit-atfieldname-$fieldName"
+                    tal:attributes="class string:form-element kssattr-atfieldname-$fieldName"
                     tal:condition="python:mode=='edit'" ><br />
                  <input name="azax-save"
                         value="Save" type="button"

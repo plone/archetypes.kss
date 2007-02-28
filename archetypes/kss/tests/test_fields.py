@@ -77,7 +77,7 @@ class FieldsViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
         view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')
         result = view.kss_class('title', 'view')
         # writeable
-        self.assertEqual(result, ' kukit-atfieldname-title kukit-widgetstate-view kssFieldDblClickable')
+        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-widgetstate-view kssFieldDblClickable')
         self.logout()
         result = view.kss_class('title', 'view')
         # not writeable
@@ -94,7 +94,7 @@ class FieldsViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
         view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')
         result = view.kss_class('title', 'view', singleclick=True)
         # writeable
-        self.assertEqual(result, ' kukit-atfieldname-title kukit-widgetstate-view kssFieldClickable')
+        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-widgetstate-view kssFieldClickable')
         self.logout()
         result = view.kss_class('title', 'view', singleclick=True)
         # not writeable

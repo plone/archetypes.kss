@@ -138,11 +138,11 @@ class ATFieldDecoratorView(BrowserView):
         # field can be None when widgets are used without fields
         # check whether field is valid
         if field is not None and field.writeable(context):
-            # kukit-atfieldname-FIELDNAME:  the generic field marker
-            # kukit-widgetstate-STATE:      the widgets's state
+            # kssattr-atfieldname-FIELDNAME:  the generic field marker
+            # kssattr-widgetstate-STATE:      the widgets's state
             # kssFieldClickable:            selector for clickable
             # kssFieldDblClickable:         selector for double clickable
-            classstring = ' kukit-atfieldname-%s kukit-widgetstate-%s' % (fieldname, mode)
+            classstring = ' kssattr-atfieldname-%s kssattr-widgetstate-%s' % (fieldname, mode)
             if mode == 'view':
                 if singleclick:
                     classstring += ' kssFieldClickable'
