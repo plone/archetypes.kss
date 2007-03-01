@@ -40,63 +40,75 @@ class FieldsViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
     # test the Kss methods
     # --
 
-    def testRenderField(self):
-        # Test rendering a string field in both view and edit mode
-        result = self.view.replaceField('title','view')
+    def testReplaceField(self):
+        result = self.view.replaceField('title', 'kss_generic_macros', 'title-field-view')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
-             ('replaceHTML', 'kss-inlineform-title', 'htmlid'),
+             ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
             ])
 
-    def testRenderTitleWithEdit(self):
-        result = self.view.replaceField('title','edit')
+    def testReplaceWithView(self):
+        result = self.view.replaceWithView('title', 'kss_generic_macros', 'title-field-view')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
-             ('replaceInnerHTML', 'parent-fieldname-title', 'htmlid'),
+             ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
             ])
 
     def testSaveField(self):
         view = self.view
-        result = view.saveField('title', 'My Title')
+        result = view.saveField('title', {'title':'My Title'}, 
+                                'kss_generic_macros', 'title-field-view')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
-             ('replaceHTML', 'kss-inlineform-title', 'htmlid'),
+             ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
             ])
         self.assertEqual('My Title', self.portal['front-page'].Title())
-        res = view.saveField('description', 'Woot a funky description!')
+        res = view.saveField('description',
+                             {'description':'Woot a funky description!'},
+                             'kss_generic_macros', 'description-field-view')
         self.assertEqual('Woot a funky description!', self.portal['front-page'].Description())
     
     def testSaveFieldWithEvents(self):
         view = self.view
-        result = view.saveField('title', 'My Title')
+        result = view.saveField('title', {'title':'My Title'}, 
+                                'kss_generic_macros', 'title-field-view')
         self.assertEqual('My Title', self.portal['front-page'].Title())
-        res = view.saveField('description', 'Woot a funky description!')
+        res = view.saveField('description',
+                             {'description':'Woot a funky description!'},
+                             'kss_generic_macros', 'description-field-view')
         self.assertEqual('Woot a funky description!', self.portal['front-page'].Description())
 
+
     def testMarkerInATField(self):
-        view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')
-        result = view.kss_class('title', 'view')
         # writeable
-        self.assertEqual(result, ' kssattr-atfieldname-title kssFieldDblClickable')
+        view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')
+        result = view.getKssClasses('title')
+        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-macro-title-field-view')
+        result = view.getKssClasses('title', 'template')
+        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template kssattr-macro-title-field-view')
+        result = view.getKssClasses('title', 'template', 'macro')
+        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template kssattr-macro-macro')
         self.logout()
-        result = view.kss_class('title', 'view')
+        result = view.getKssClasses('title')
         # not writeable
+        self.assertEqual(result, '')
+
+    def testMarkerInATFieldInlineEditable(self):
+        # writeable
+        view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')
+        result = view.getKssClassesInlineEditable('title', 'template')
+        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template kssattr-macro-title-field-view inlineEditable')
+        result = view.getKssClassesInlineEditable('title', 'template', 'macro')
+        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template kssattr-macro-macro inlineEditable')
+        self.logout()
+        # not writeable
+        result = view.getKssClassesInlineEditable('title', 'template')
         self.assertEqual(result, '')
 
     def testMarkerInNonATField(self):
         # portal root is not an AT object
         view = self.portal.restrictedTraverse('kss_field_decorator_view')
-        result = view.kss_class('title', 'view')
-        # not writeable
-        self.assertEqual(result, '')
-
-    def testMarkerSingleClick(self):
-        view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')
-        result = view.kss_class('title', 'view', singleclick=True)
-        # writeable
-        self.assertEqual(result, ' kssattr-atfieldname-title kssFieldClickable')
-        self.logout()
-        result = view.kss_class('title', 'view', singleclick=True)
+        result = view.getKssClasses('title')
         # not writeable
         self.assertEqual(result, '')
 

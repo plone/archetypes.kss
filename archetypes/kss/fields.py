@@ -37,76 +37,74 @@ class FieldsView(AzaxBaseView):
 
     ## Kss methods
    
-    field_wrapper = ZopeTwoPageTemplateFile('browser/field_wrapper.pt')
-    def renderField(self, fieldname, mode='view', macro_path=None):
+    view_field_wrapper = ZopeTwoPageTemplateFile('browser/view_field_wrapper.pt')
+    edit_field_wrapper = ZopeTwoPageTemplateFile('browser/edit_field_wrapper.pt')
+
+    def renderViewField(self, fieldname, templateId, macro):
         """
-        This method handles the rendering of a field, it calls either the edit or
-        view macro based on the given mode.
+        renders the macro coming from the view template
+        """
+        template = self.context.restrictedTraverse(templateId)
+        viewMacro = template.macros[macro]
+        res = self.view_field_wrapper(viewMacro=viewMacro,
+                                      context=self.context,
+                                      templateId=templateId)
+        return res
+
+    def renderEditField(self, fieldname, templateId, macro):
+        """
+        renders the edit widget inside the macro coming from the view template
         """
         context = self.context
         fieldname = fieldname.split('archetypes-fieldname-')[-1]
         field = context.getField(fieldname)
-        if macro_path:
-            # here/portlet_news/macros/a_macro
-            prefix, macro = tuple(macro_path.split(r'/macros/'))
-            here, path = tuple(prefix.split('/', 1)) 
-            if not here in ['here', 'context']:
-                raise NameError, "First part of the path should be 'here' or 'context'"
-            template = context.restrictedTraverse(path = path)
-            code = template.macros[macro]
-        else:
-            code = field.widget(mode, context)
+        template = context.restrictedTraverse(templateId)
+        containingMacro = template.macros[macro]
+       
+        widgetMacro = field.widget('edit', context)
 
-        res = self.field_wrapper(the_macro=code, field=field, instance=context, mode=mode)
+        res = self.edit_field_wrapper(containingMacro=containingMacro,
+                                      widgetMacro=widgetMacro,
+                                      field=field, instance=context,
+                                      mode='edit',
+                                      showFormButtons=True,
+                                      templateId=templateId)
         return res
 
-    def replaceFieldHelper(self, fieldname, mode='view', macro_path=None):
+    def replaceField(self, fieldname, templateId, macro):
         """
+        kss commands to replace the field value by the edit widget
         """
         parent_fieldname = "parent-fieldname-%s" % fieldname
-    
-
-        res = self.renderField(fieldname, mode=mode, macro_path=macro_path)
-
-        res = res.strip()
+        html = self.renderEditField(fieldname, templateId, macro)
+        html = html.strip()
         ksscore = self.getCommandSet('core')
-        if mode == 'view':
-            if macro_path is None:        
-                ksscore.replaceHTML(ksscore.getHtmlIdSelector('kss-inlineform-%s'%fieldname), res)
-            else:
-                ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), res)
-        if mode == 'edit':
-            ksscore.replaceInnerHTML(ksscore.getHtmlIdSelector(parent_fieldname), res)
-
-    def replaceField(self, fieldname, mode='view', macro_path=None):
-        """
-        """
-        self.replaceFieldHelper(fieldname, mode, macro_path)
+        ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), html)
         return self.render()
 
-    def saveField(self, fieldname, value, mode='view', macro_path=None):
+
+    def replaceWithView(self, fieldname, templateId, macro):
+        """
+        kss commands to replace the edit widget by the field view
+        """
+        parent_fieldname = "parent-fieldname-%s" % fieldname
+        html = self.renderViewField(fieldname, templateId, macro)
+        html = html.strip()
+        ksscore = self.getCommandSet('core')
+        ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), html)
+        return self.render()
+
+
+    def saveField(self, fieldname, value, templateId, macro):
         """
         This method saves the current value to the field. and returns the rendered
         view macro.
         """
-        # We receive a string or a dict in value.
-        #
-        # XXX we want to get rid of this! I believe that for all types
-        # we support, there would be a possibility to just receive a string value.
-        # what's more I think this is principally wrong because the mutator
-        # does _not_ except the form in kwargs but already some values deducted
-        # from it. If we really want to go this way we should use process_input
-        # from the widget, but since we can make a per widget customized solution
-        # the best would be just to pass what we need instead of passing the entire
-        # form (if possible).
-        if isinstance(value, basestring):
-            kwargs = {}
-        else:
-            kwargs = dict(value)
-            value = kwargs.get(fieldname, '')
+        # We receive a dict in value.
         #
         instance = self.context.aq_inner
         field = instance.getField(fieldname)
+        value, kwargs = field.widget.process_form(instance, field, value)
         error = field.validate(value, instance, {})
         if not error and field.writeable(instance):
             setField = field.getMutator(instance)
@@ -116,14 +114,14 @@ class FieldsView(AzaxBaseView):
             descriptor = lifecycleevent.Attributes(IPortalObject, fieldname)
             event.notify(ObjectEditedEvent(self.context, descriptor))
             
-            self.replaceFieldHelper(fieldname=fieldname, mode='view', macro_path=macro_path)
+            return self.replaceWithView(fieldname, templateId, macro)
         else:
             if not error:
                 # XXX This should not actually happen...
                 error = 'Field is not writeable.'
             # Send back the validation error
             self.getCommandSet('atvalidation').issueFieldError(fieldname, error)
-        return self.render()
+            return self.render()
 
 
 # --
@@ -132,18 +130,25 @@ class FieldsView(AzaxBaseView):
 
 class ATFieldDecoratorView(BrowserView):
 
-    def kss_class(self, fieldname, mode, singleclick=False):
+    def getKssClasses(self, fieldname, templateId=None, macro=None):
         context = aq_inner(self.context)
         field = context.getField(fieldname)
         # field can be None when widgets are used without fields
         # check whether field is valid
         if field is not None and field.writeable(context):
             classstring = ' kssattr-atfieldname-%s' % fieldname
-            if mode == 'view':
-                if singleclick:
-                    classstring += ' kssFieldClickable'
-                else:
-                    classstring += ' kssFieldDblClickable'
+            if templateId is not None:
+                classstring += ' kssattr-templateId-%s' % templateId
+            if macro is not None:
+                classstring += ' kssattr-macro-%s' % macro
+            else:
+                classstring += ' kssattr-macro-%s-field-view' % fieldname
         else:
             classstring = ''
+        return classstring
+    
+    def getKssClassesInlineEditable(self, fieldname, templateId, macro=None):
+        classstring = self.getKssClasses(fieldname, templateId, macro)
+        if classstring:
+            classstring += ' inlineEditable'
         return classstring

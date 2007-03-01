@@ -34,6 +34,14 @@
     <browser:page
         for="Products.Archetypes.interfaces.IBaseObject"
         class=".fields.FieldsView"
+        name="replaceWithView"
+        attribute="replaceWithView"
+        permission="zope.Public"
+      />
+
+    <browser:page
+        for="Products.Archetypes.interfaces.IBaseObject"
+        class=".fields.FieldsView"
         name="saveField"
         attribute="saveField"
         permission="cmf.ModifyPortalContent"
@@ -41,21 +49,12 @@
 
     <!-- field decorator (non-ajax) views -->
 
-    <!-- this is done from Products.Archetypes now -->
-    <!--browser:page
-	for="*"
-	name="kss_field_decorator_view"
-        permission="zope2.View"
-        class=".fields.DefaultFieldDecoratorView"
-        allowed_attributes="kss_class"
-        /-->
-
     <browser:page
 	for="Products.Archetypes.interfaces.IBaseObject"
 	name="kss_field_decorator_view"
         permission="zope2.View"
         class=".fields.ATFieldDecoratorView"
-        allowed_attributes="kss_class"
+        allowed_attributes="getKssClassesInlineEditable getKssClasses"
         />
     
 </configure>
