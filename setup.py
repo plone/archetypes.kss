@@ -10,6 +10,7 @@ setup(name='archetypes.kss',
 """,
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
+        "Framework :: Plone",
         "Framework :: Zope2",
         "Framework :: Zope3",
         "Programming Language :: Python",
