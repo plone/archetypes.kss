@@ -12,14 +12,15 @@
                          accessor python:field.getAccessor(here);
                          kssClassesView context/@@kss_field_decorator_view;
                          getKssClasses nocall:kssClassesView/getKssClasses;
-                         templateId options/templateId">
+                         templateId options/templateId;
+                         ">
     <metal:containingMacro use-macro="options/containingMacro"><metal:insideSlot fill-slot="inside">
-         <form tal:attributes="class string:field kssInlineForm;
+         <form tal:attributes="class string:field inlineForm;
                              id string:kss-inlineform-$fieldName;">
            <metal:editWidget use-macro="options/widgetMacro" />
            <div class="formControls"
                 tal:attributes="class string:form-element"
-                tal:condition="options/showFormButtons"><br />
+                tal:condition="not:widget/blurrable"><br />
              <input name="kss-save"
                     value="Save" type="button"
                     class="context" />

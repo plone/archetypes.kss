@@ -30,7 +30,6 @@ from Products.Archetypes.event import ObjectEditedEvent
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 
-
 class FieldsView(AzaxBaseView):
     
     implements(IPloneAzaxView)
@@ -60,14 +59,13 @@ class FieldsView(AzaxBaseView):
         field = context.getField(fieldname)
         template = context.restrictedTraverse(templateId)
         containingMacro = template.macros[macro]
-       
-        widgetMacro = field.widget('edit', context)
-
+        widget = field.widget
+        widgetMacro = widget('edit', context)
+        
         res = self.edit_field_wrapper(containingMacro=containingMacro,
                                       widgetMacro=widgetMacro,
                                       field=field, instance=context,
                                       mode='edit',
-                                      showFormButtons=True,
                                       templateId=templateId)
         return res
 
