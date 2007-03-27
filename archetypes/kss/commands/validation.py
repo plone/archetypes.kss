@@ -15,6 +15,9 @@ class ValidationCommands(AzaxViewAdapter):
             ksscore.clearChildNodes(selector)
             errorklass = ''
         klass = "field%s Archetypes%sfield" % (errorklass, fieldname)
+        kssattr = self.context.restrictedTraverse('kss_field_decorator_view').getKssClasses(fieldname)
+        if kssattr:
+            klass += ' ' + kssattr
         # set the field style in the required way
         ksscore.setAttribute(
             ksscore.getHtmlIdSelector('archetypes-fieldname-%s' % fieldname),
