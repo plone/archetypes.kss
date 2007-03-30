@@ -14,14 +14,7 @@ for x in ZOPE_DEPS + PLONE_DEPS:
     ztc.installProduct(x)
 ptc.setupPloneSite(products=PLONE_DEPS)
 
-class TestForKSSInlineEditing(ptc.FunctionalTestCase):
-    """
-    Ok, this is a strange case of doctest: actually, we are able to use
-    self inside the doctests, but the import stuff is still quite broken,
-    hence the abundance of function that do just one libne of code or so
-    (take a look at Daniel Nouri's blog for more details)
-    """
-    
+class TestKSSAttributes(ptc.FunctionalTestCase):
     
     def afterSetUp(self):
         self.folder.invokeFactory('Document', 'page')
@@ -32,6 +25,15 @@ class TestForKSSInlineEditing(ptc.FunctionalTestCase):
         self.user = ptc.default_user
         self.password = ptc.default_password
         self.browser = Browser()
+
+class TestForKSSInlineEditing:
+    """
+    Ok, this is a strange case of doctest: actually, we are able to use
+    self inside the doctests, but the import stuff is still quite broken,
+    hence the abundance of function that do just one libne of code or so
+    (take a look at Daniel Nouri's blog for more details)
+    """
+    
       
     def test_notLogged():
         r"""
@@ -116,7 +118,14 @@ class TestForKSSInlineEditing(ptc.FunctionalTestCase):
           True
         """
 
+class TestContentsTabs:
+    def test_this():
+	"""
+	  >>> 1 + 1
+          2
+        """
+
 def test_suite():
-    suite = ztc.FunctionalDocTestSuite(test_class=TestForKSSInlineEditing)
+    suite = ztc.FunctionalDocTestSuite(test_class=TestKSSAttributes)
     suite.layer = PloneSite
     return suite
