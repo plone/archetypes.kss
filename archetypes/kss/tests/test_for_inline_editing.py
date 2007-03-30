@@ -49,13 +49,17 @@ class TestForKSSInlineEditing(ptc.FunctionalTestCase):
         We find the title tag
         
           >>> title = soup.find('h1', attrs = { 'id': 'parent-fieldname-title' })
-          >>> self.failUnless(title)
+          >>> title is not None
+          True
         
         We see that the KSS hooks shouldn't be there because we're not logged in!
         
-          >>> self.failIf('kssattr-atfieldname-' in title['class'])
-          >>> self.failIf('kssattr-templateId-' in title['class'])
-          >>> self.failIf('kssattr-macro-' in title['class'])
+          >>> 'kssattr-atfieldname-' in title['class']
+          False
+          >>> 'kssattr-templateId-' in title['class']
+          False
+          >>> 'kssattr-macro-' in title['class']
+          False
         """
 
     def test_logged():
@@ -74,30 +78,42 @@ class TestForKSSInlineEditing(ptc.FunctionalTestCase):
         We find the title
         
           >>> title = soup.find('h1', attrs = { 'id': 'parent-fieldname-title' })
-          >>> self.failUnless(title)
+          >>> title is not None
+          True
         
         We check everything is in now, especially that kssattr-fieldname- matched the right field,
         and is not only there, but actually makes some sense
         
-          >>> self.failUnless('kssattr-atfieldname-title' in title['class'])
-          >>> self.failUnless('kssattr-templateId-' in title['class'])
-          >>> self.failUnless('kssattr-macro-' in title['class'])
+          >>> 'kssattr-atfieldname-title' in title['class']
+          True
+          >>> 'kssattr-templateId-' in title['class']
+          True
+          >>> 'kssattr-macro-' in title['class']
+          True
         
         Rerun, description now! (which is not a Francis Ford Coppola's movie)
         
-          >>> title = soup.find('p', attrs = { 'id': 'parent-fieldname-description' })
-          >>> self.failUnless(title)
-          >>> self.failUnless('kssattr-atfieldname-description' in title['class'])
-          >>> self.failUnless('kssattr-templateId-' in title['class'])
-          >>> self.failUnless('kssattr-macro-' in title['class'])
+          >>> description = soup.find('p', attrs = { 'id': 'parent-fieldname-description' })
+          >>> description is not None
+          True
+          >>> 'kssattr-atfieldname-description' in description['class']
+          True
+          >>> 'kssattr-templateId-' in description['class']
+          True
+          >>> 'kssattr-macro-' in description['class']
+          True
         
         Now, time for the text
         
-          >>> title = soup.find('div', attrs = { 'id': 'parent-fieldname-text' })
-          >>> self.failUnless(title)
-          >>> self.failUnless('kssattr-atfieldname-text' in title['class'])
-          >>> self.failUnless('kssattr-templateId-' in title['class'])
-          >>> self.failUnless('kssattr-macro-' in title['class'])
+          >>> text = soup.find('div', attrs = { 'id': 'parent-fieldname-text' })
+          >>> text is not None
+          True
+          >>> 'kssattr-atfieldname-text' in text['class']
+          True
+          >>> 'kssattr-templateId-' in text['class']
+          True
+          >>> 'kssattr-macro-' in text['class']
+          True
         """
 
 def test_suite():
