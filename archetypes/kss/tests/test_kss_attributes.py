@@ -89,7 +89,7 @@ class TestForKSSInlineEditing:
         
         Now, time for the text
         
-          >>> text = soup.find('div', attrs=dict(id='parent-fieldname-text'))
+          >>> text = soup.find('div', dict(id='parent-fieldname-text'))
           >>> text is not None
           True
           >>> 'kssattr-atfieldname-text' in text['class']
@@ -113,8 +113,9 @@ class TestContentsTabs:
         
         The content tabs must have li tags with special ids:
 
-          >>> li = soup.find('li', attrs=dict(id='contentview-folderContents'))
-          >>> li is not None
+          >>> soup.find('li', dict(id='contentview-view')) is not None
+          True
+          >>> soup.find('li', dict(id='contentview-edit')) is not None
           True
 	"""
 
