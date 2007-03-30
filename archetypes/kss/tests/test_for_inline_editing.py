@@ -2,6 +2,7 @@ from Testing import ZopeTestCase as ztc
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
 from kss.core.BeautifulSoup import BeautifulSoup
+from Products.Five.testbrowser import Browser
 
 ZOPE_DEPS = []
 PLONE_DEPS = []
@@ -22,7 +23,7 @@ class TestForKSSInlineEditing(ptc.FunctionalTestCase):
     """
     
     
-    def setupTest(self):
+    def afterSetUp(self):
         self.folder.invokeFactory('Document', 'page')
         self.page = self.folder.page
         self.page.setTitle('My title')
@@ -30,27 +31,20 @@ class TestForKSSInlineEditing(ptc.FunctionalTestCase):
         self.page.setText('<p>My text</p>')
         self.user = ptc.default_user
         self.password = ptc.default_password
-    
-    def makeSoup(self, html):
-        soup = BeautifulSoup(html)
-        return soup
-    
+        self.browser = Browser()
+      
     def test_notLogged():
         r"""
         
         We import some stuff, else we're not gonna go anywhere
         cause the import is more broken than Saddam's neck
         
-          >>> from Products.Five.testbrowser import Browser
-        
-        We setup the testing environment
-        
-          >>> self.setupTest()
+          >>> from kss.core.BeautifulSoup import BeautifulSoup
         
         We call the page
         
-          >>> browser = Browser(self.page.absolute_url())
-          >>> soup = self.makeSoup(browser.contents)
+          >>> self.browser.open(self.page.absolute_url())
+          >>> soup = BeautifulSoup(self.browser.contents)
         
         We find the title tag
         
@@ -69,15 +63,13 @@ class TestForKSSInlineEditing(ptc.FunctionalTestCase):
         
         All the usual setup
         
-          >>> from Products.Five.testbrowser import Browser
-          >>> self.setupTest()
+          >>> from kss.core.BeautifulSoup import BeautifulSoup
         
         Okay, we don't go straight away for the page but we actually do authenticate
         
-          >>> browser = Browser()
-          >>> browser.addHeader('Authorization', 'Basic %s:%s' % (self.user, self.password))
-          >>> browser.open(self.page.absolute_url())
-          >>> soup = self.makeSoup(browser.contents)
+          >>> self.browser.addHeader('Authorization', 'Basic %s:%s' % (self.user, self.password))
+          >>> self.browser.open(self.page.absolute_url())
+          >>> soup = BeautifulSoup(self.browser.contents)
         
         We find the title
         
