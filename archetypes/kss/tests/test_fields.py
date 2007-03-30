@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 # Copyright (c) 2006
 # Authors:
 #   Jean-Paul Ladage <j.ladage@zestsoftware.nl>
@@ -20,11 +19,11 @@
 
 import unittest
 from Products.PloneTestCase import PloneTestCase
-from kss.core.tests.base import AzaxViewTestCase 
+from plone.app.kss.tests import KSSAndPloneTestCase
 
 PloneTestCase.setupPloneSite()
 
-class FieldsViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
+class FieldsViewTestCase(KSSAndPloneTestCase):
 
     def afterSetUp(self):
         PloneTestCase.PloneTestCase.afterSetUp(self)

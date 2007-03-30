@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 # Copyright (c) 2006
 # Authors: Plone
 #
@@ -20,11 +19,11 @@
 import unittest
 from zope.testing import doctest
 from Products.PloneTestCase import PloneTestCase
-from kss.core.tests.base import AzaxViewTestCase 
+from plone.app.kss.tests import KSSAndPloneTestCase
 
 PloneTestCase.setupPloneSite()
 
-class ValidationViewTestCase(PloneTestCase.PloneTestCase, AzaxViewTestCase):
+class ValidationViewTestCase(KSSAndPloneTestCase):
 
     def afterSetUp(self):
         PloneTestCase.PloneTestCase.afterSetUp(self)
