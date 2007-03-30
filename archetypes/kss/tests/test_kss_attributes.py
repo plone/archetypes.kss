@@ -117,6 +117,10 @@ class TestContentsTabs:
           True
           >>> soup.find('li', dict(id='contentview-edit')) is not None
           True
+          >>> soup.find('li', dict(id='contentview-local_roles')) is not None
+          True
+          >>> soup.find('li', dict(id='contentview-history')) is not None
+          True
 	"""
 
 def test_suite():
