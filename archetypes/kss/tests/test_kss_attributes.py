@@ -4,18 +4,10 @@ from Products.PloneTestCase.layer import PloneSite
 from kss.core.BeautifulSoup import BeautifulSoup
 from Products.Five.testbrowser import Browser
 
-ZOPE_DEPS = []
-PLONE_DEPS = []
-#ZOPE_DEPS = ['MyZopeProductDependecy']
-#PLONE_DEPS = ['MyPloneProduct',
-#              'MyPloneDependency']
-
-for x in ZOPE_DEPS + PLONE_DEPS:
-    ztc.installProduct(x)
-ptc.setupPloneSite(products=PLONE_DEPS)
-
 class TestKSSAttributes(ptc.FunctionalTestCase):
     
+    BeautifulSoup = BeautifulSoup
+
     def afterSetUp(self):
         self.folder.invokeFactory('Document', 'page')
         self.page = self.folder.page
@@ -27,34 +19,23 @@ class TestKSSAttributes(ptc.FunctionalTestCase):
         self.browser = Browser()
 
 class TestForKSSInlineEditing:
-    """
-    Ok, this is a strange case of doctest: actually, we are able to use
-    self inside the doctests, but the import stuff is still quite broken,
-    hence the abundance of function that do just one libne of code or so
-    (take a look at Daniel Nouri's blog for more details)
-    """
-    
       
     def test_notLogged():
         r"""
         
-        We import some stuff, else we're not gonna go anywhere
-        cause the import is more broken than Saddam's neck
-        
-          >>> from kss.core.BeautifulSoup import BeautifulSoup
-        
         We call the page
         
           >>> self.browser.open(self.page.absolute_url())
-          >>> soup = BeautifulSoup(self.browser.contents)
+          >>> soup = self.BeautifulSoup(self.browser.contents)
         
         We find the title tag
         
-          >>> title = soup.find('h1', attrs = { 'id': 'parent-fieldname-title' })
+          >>> title = soup.find('h1', attrs=dict(id='parent-fieldname-title'))
           >>> title is not None
           True
         
-        We see that the KSS hooks shouldn't be there because we're not logged in!
+        We see that the KSS hooks shouldn't be there because we're not
+        logged in!
         
           >>> 'kssattr-atfieldname-' in title['class']
           False
@@ -67,24 +48,23 @@ class TestForKSSInlineEditing:
     def test_logged():
         r"""
         
-        All the usual setup
+        Okay, we don't go straight away for the page but we actually
+        do authenticate
         
-          >>> from kss.core.BeautifulSoup import BeautifulSoup
-        
-        Okay, we don't go straight away for the page but we actually do authenticate
-        
-          >>> self.browser.addHeader('Authorization', 'Basic %s:%s' % (self.user, self.password))
+          >>> self.browser.addHeader(
+          ...    'Authorization', 'Basic %s:%s' % (self.user, self.password))
           >>> self.browser.open(self.page.absolute_url())
-          >>> soup = BeautifulSoup(self.browser.contents)
+          >>> soup = self.BeautifulSoup(self.browser.contents)
         
         We find the title
         
-          >>> title = soup.find('h1', attrs = { 'id': 'parent-fieldname-title' })
+          >>> title = soup.find('h1', dict(id='parent-fieldname-title'))
           >>> title is not None
           True
         
-        We check everything is in now, especially that kssattr-fieldname- matched the right field,
-        and is not only there, but actually makes some sense
+        We check everything is in now, especially that
+        ``kssattr-fieldname-`` matched the right field, and is not
+        only there, but actually makes some sense
         
           >>> 'kssattr-atfieldname-title' in title['class']
           True
@@ -93,9 +73,11 @@ class TestForKSSInlineEditing:
           >>> 'kssattr-macro-' in title['class']
           True
         
-        Rerun, description now! (which is not a Francis Ford Coppola's movie)
+        Rerun, description now! (which is not a Francis Ford Coppola's
+        movie)
         
-          >>> description = soup.find('p', attrs = { 'id': 'parent-fieldname-description' })
+          >>> description = soup.find(
+          ...    'p', dict(id='parent-fieldname-description'))
           >>> description is not None
           True
           >>> 'kssattr-atfieldname-description' in description['class']
@@ -107,7 +89,7 @@ class TestForKSSInlineEditing:
         
         Now, time for the text
         
-          >>> text = soup.find('div', attrs = { 'id': 'parent-fieldname-text' })
+          >>> text = soup.find('div', attrs=dict(id='parent-fieldname-text'))
           >>> text is not None
           True
           >>> 'kssattr-atfieldname-text' in text['class']
@@ -119,11 +101,22 @@ class TestForKSSInlineEditing:
         """
 
 class TestContentsTabs:
-    def test_this():
-	"""
-	  >>> 1 + 1
-          2
+    def test_tab_ids():
         """
+        Okay, we don't go straight away for the page but we actually
+        do authenticate
+        
+          >>> self.browser.addHeader(
+          ...    'Authorization', 'Basic %s:%s' % (self.user, self.password))
+          >>> self.browser.open(self.page.absolute_url())
+          >>> soup = self.BeautifulSoup(self.browser.contents)
+        
+        The content tabs must have li tags with special ids:
+
+          >>> li = soup.find('li', attrs=dict(id='contentview-folderContents'))
+          >>> li is not None
+          True
+	"""
 
 def test_suite():
     suite = ztc.FunctionalDocTestSuite(test_class=TestKSSAttributes)
