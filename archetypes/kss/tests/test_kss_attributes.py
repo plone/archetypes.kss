@@ -123,6 +123,32 @@ class TestContentsTabs:
           True
 	"""
 
+class TestContentViews:
+    def test_ul_id():
+        """
+        We actually authenticate and we'll doing some tests about ul id (which it should be present)
+        
+          >>> self.browser.addHeader(
+          ...    'Authorization', 'Basic %s:%s' % (self.user, self.password))
+          >>> self.browser.open(self.page.absolute_url())
+          >>> soup = self.BeautifulSoup(self.browser.contents)
+        
+        The content tabs must have li tags with special ids:
+        Checking for the correct ul tag class
+
+          >>> content_ul_tag = soup.find('ul', {'class':'contentViews'})
+          >>> content_ul_tag is not None
+          True 
+          
+        a tags inside of the li tags shouldn't have ids; li tags should have id attributes
+
+          >>> [a.get('id') for a in content_ul_tag.findAll('a')]
+          [None, None, None, None]
+          >>> [li.get('id') for li in content_ul_tag.findAll('li')]
+          [u'contentview-view', u'contentview-edit', u'contentview-local_roles', u'contentview-history']
+
+	"""
+
 def test_suite():
     suite = ztc.FunctionalDocTestSuite(test_class=TestKSSAttributes)
     suite.layer = PloneSite
