@@ -22,6 +22,8 @@ from plone.app.kss import AzaxBaseView
 from plone.app.kss.interfaces import IPloneAzaxView
 from plone.app.kss.interfaces import IPortalObject
 
+from plone.locking.interfaces import ILockable
+
 from zope.interface import implements
 from zope import lifecycleevent, event
 
@@ -69,10 +71,19 @@ class FieldsView(AzaxBaseView):
                                       templateId=templateId)
         return res
 
-    def replaceField(self, fieldname, templateId, macro):
+    def replaceField(self, fieldname, templateId, macro, edit=False):
         """
         kss commands to replace the field value by the edit widget
-        """
+
+        The edit parameter may be used if we are coming from something else
+        than an edit view.
+         """
+        if edit:
+            locking = ILockable(self.context)
+            if locking and not locking.can_safely_unlock():
+                return self.render()
+        self.getCommandSet('portalmessage').issuePortalMessage('')
+
         parent_fieldname = "parent-fieldname-%s" % fieldname
         html = self.renderEditField(fieldname, templateId, macro)
         html = html.strip()
