@@ -26,6 +26,8 @@ from plone.locking.interfaces import ILockable
 
 from zope.interface import implements
 from zope import lifecycleevent, event
+from zope.component import getMultiAdapter
+from zope.viewlet.interfaces import IViewletManager
 
 from Acquisition import aq_inner
 from Products.Archetypes.event import ObjectEditedEvent
@@ -81,6 +83,15 @@ class FieldsView(AzaxBaseView):
         if edit:
             locking = ILockable(self.context)
             if locking and not locking.can_safely_unlock():
+                manager = getMultiAdapter((self.context, self.request, self),
+                                          IViewletManager,
+                                          name='plone.abovecontent')
+                self.getCommandSet('refreshviewlet').refreshViewlet('viewlet-above-content',
+                                                                    manager,
+                                                                    'plone.lockinfo')
+                self.getCommandSet('contentmenu').refreshContentMenu(id='contentActionMenus', 
+                                                                 name='plone.contentmenu')
+
                 return self.render()
         self.getCommandSet('portalmessage').issuePortalMessage('')
 
