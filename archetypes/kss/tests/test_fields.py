@@ -19,7 +19,7 @@
 
 import unittest
 from Products.PloneTestCase import PloneTestCase
-from plone.app.kss.tests import KSSAndPloneTestCase
+from plone.app.kss.tests.kss_and_plone_layer import KSSAndPloneTestCase
 
 PloneTestCase.setupPloneSite()
 
