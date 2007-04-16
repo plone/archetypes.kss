@@ -24,6 +24,7 @@ from plone.app.kss.interfaces import IPortalObject
 
 from zope.interface import implements
 from zope import lifecycleevent, event
+from zope.publisher.interfaces.browser import IBrowserView
 
 from Acquisition import aq_inner
 from Products.Archetypes.event import ObjectEditedEvent
@@ -44,6 +45,16 @@ class FieldsView(AzaxBaseView):
         renders the macro coming from the view template
         """
         template = self.context.restrictedTraverse(templateId)
+        
+        if IBrowserView.providedBy(template):
+            view = template
+            for attr in ('index', 'template', '__call__'):
+                template = getattr(view, attr, None)
+                if template is not None and hasattr(template, 'macros'):
+                    break
+            if template is None:
+                raise KeyError("Unable to find template for view %s" % templateId)
+
         viewMacro = template.macros[macro]
         res = self.view_field_wrapper(viewMacro=viewMacro,
                                       context=self.context,
@@ -58,6 +69,17 @@ class FieldsView(AzaxBaseView):
         fieldname = fieldname.split('archetypes-fieldname-')[-1]
         field = context.getField(fieldname)
         template = context.restrictedTraverse(templateId)
+        
+        
+        if IBrowserView.providedBy(template):
+            view = template
+            for attr in ('index', 'template', '__call__'):
+                template = getattr(view, attr, None)
+                if template is not None and hasattr(template, 'macros'):
+                    break
+            if template is None:
+                raise KeyError("Unable to find template for view %s" % templateId)
+        
         containingMacro = template.macros[macro]
         widget = field.widget
         widgetMacro = widget('edit', context)
