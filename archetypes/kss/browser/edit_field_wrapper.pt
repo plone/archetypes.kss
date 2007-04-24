@@ -19,8 +19,7 @@
                              id string:kss-inlineform-$fieldName;">
            <metal:editWidget use-macro="options/widgetMacro" />
            <div class="formControls"
-                tal:attributes="class string:form-element"
-                tal:condition="not:widget/blurrable"><br />
+                tal:attributes="class string:form-element"><br />
              <input name="kss-save"
                     value="Save" type="button"
                     class="context" />
