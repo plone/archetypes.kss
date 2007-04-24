@@ -17,7 +17,6 @@
 #
 
 import unittest
-from zope.testing import doctest
 from Products.PloneTestCase import PloneTestCase
 from plone.app.kss.tests.kss_and_plone_layer import KSSAndPloneTestCase
 
@@ -129,12 +128,13 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
         
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
-                ('replaceInnerHTML', 'kssPortalMessage', 'htmlid'), 
-                ('setAttribute', 'kssPortalMessage', 'htmlid'),
-                ('setStyle', 'kssPortalMessage', 'htmlid'), 
-                ('clearChildNodes', 'div.field div.fieldErrorBox', 'css'), 
-                ('replaceInnerHTML', 'div#archetypes-fieldname-title div.fieldErrorBox', 'css'),
-                ('setAttribute', 'archetypes-fieldname-title', 'htmlid'),
+                 ('setStyle', '.portalMessage', 'css'),
+                 ('replaceInnerHTML', 'kssPortalMessage', 'htmlid'),
+                 ('setAttribute', 'kssPortalMessage', 'htmlid'),
+                 ('setStyle', 'kssPortalMessage', 'htmlid'),
+                 ('clearChildNodes', 'div.field div.fieldErrorBox', 'css'),
+                 ('replaceInnerHTML', 'div#archetypes-fieldname-title div.fieldErrorBox', 'css'), 
+                 ('setAttribute', 'archetypes-fieldname-title', 'htmlid'),
             ])
 
     def testValidateFormWithUploads(self):
