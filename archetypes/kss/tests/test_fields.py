@@ -40,13 +40,16 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
     # --
 
     def testReplaceField(self):
+        self.view.context.changeSkin('Plone Default')
         result = self.view.replaceField('title', 'kss_generic_macros', 'title-field-view')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
              ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
+             ('focus', '#parent-fieldname-title .firstToFocus', ''),
             ])
 
     def testReplaceWithView(self):
+        self.view.context.changeSkin('Plone Default')
         result = self.view.replaceWithView('title', 'kss_generic_macros', 'title-field-view')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [

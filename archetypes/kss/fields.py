@@ -100,6 +100,7 @@ class FieldsView(AzaxBaseView):
         html = html.strip()
         ksscore = self.getCommandSet('core')
         ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), html)
+        ksscore.focus("#%s .firstToFocus" % parent_fieldname)
         return self.render()
 
 
