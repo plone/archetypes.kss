@@ -18,8 +18,7 @@
          <form tal:attributes="class string:field inlineForm;
                              id string:kss-inlineform-$fieldName;">
            <metal:editWidget use-macro="options/widgetMacro" />
-           <div class="formControls"
-                tal:attributes="class string:form-element"><br />
+           <div class="formControls">
              <input name="kss-save"
                     value="Save" type="button"
                     class="context" />
