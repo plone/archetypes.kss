@@ -6,6 +6,11 @@ archetypes.kss - 1.2dev Unreleased
 
     - ...
 
+archetypes.kss - 1.2-beta2 Released 2007-04-30
+
+    - Prepare for release
+	  [ree]
+
 archetypes.kss - 1.2-beta1 Released 2007-03-04
 
     - Prepare for release
