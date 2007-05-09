@@ -36,7 +36,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         self.view = context.restrictedTraverse('saveField')
 
     # --
-    # test the Kss methods
+    # test the KSS methods
     # --
 
     def testReplaceField(self):

@@ -23,14 +23,14 @@ from zope.interface import implements
 
 from Products.CMFPlone import PloneMessageFactory as _
 
-from plone.app.kss import AzaxBaseView
-from plone.app.kss.interfaces import IPloneAzaxView
+from plone.app.kss.azaxview import PloneKSSView
+from plone.app.kss.interfaces import IPloneKSSView
 
 SKIP_KSSVALIDATION_FIELDTYPES = ('image', 'file')
 
-class ValidationView(AzaxBaseView):
+class ValidationView(PloneKSSView):
 
-    implements(IPloneAzaxView)
+    implements(IPloneKSSView)
     
     # --
     # Kss methods

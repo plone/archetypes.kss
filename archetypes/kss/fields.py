@@ -18,8 +18,8 @@
 # 02111-1307, USA.
 #
 
-from plone.app.kss import AzaxBaseView
-from plone.app.kss.interfaces import IPloneAzaxView
+from plone.app.kss.azaxview import PloneKSSView
+from plone.app.kss.interfaces import IPloneKSSView
 from plone.app.kss.interfaces import IPortalObject
 
 from zope.interface import implements
@@ -31,11 +31,11 @@ from Products.Archetypes.event import ObjectEditedEvent
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 
-class FieldsView(AzaxBaseView):
+class FieldsView(PloneKSSView):
     
-    implements(IPloneAzaxView)
+    implements(IPloneKSSView)
 
-    ## Kss methods
+    ## KSS methods
    
     view_field_wrapper = ZopeTwoPageTemplateFile('browser/view_field_wrapper.pt')
     edit_field_wrapper = ZopeTwoPageTemplateFile('browser/edit_field_wrapper.pt')

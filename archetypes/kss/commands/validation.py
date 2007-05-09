@@ -1,7 +1,7 @@
 
-from kss.core.azaxview import AzaxViewAdapter
+from kss.core.kssview import CommandSet
 
-class ValidationCommands(AzaxViewAdapter):
+class ValidationCommands(CommandSet):
     __allow_access_to_unprotected_subobjects__ = 1
     
     def issueFieldError(self, fieldname, error):

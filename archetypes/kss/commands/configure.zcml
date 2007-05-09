@@ -6,7 +6,7 @@
 
     <kss:commandset
         name='atvalidation'
-        for="plone.app.kss.interfaces.IPloneAzaxView"
+        for="plone.app.kss.interfaces.IPloneKSSView"
         provides=".interfaces.IValidationCommands"
         class=".validation.ValidationCommands"
         />
