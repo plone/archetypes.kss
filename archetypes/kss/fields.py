@@ -18,7 +18,7 @@
 # 02111-1307, USA.
 #
 
-from plone.app.kss.azaxview import PloneKSSView
+from plone.app.kss.plonekssview import PloneKSSView
 from plone.app.kss.interfaces import IPloneKSSView
 from plone.app.kss.interfaces import IPortalObject
 
