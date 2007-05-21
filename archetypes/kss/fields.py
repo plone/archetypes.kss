@@ -102,25 +102,26 @@ class FieldsView(PloneKSSView):
         The edit parameter may be used if we are coming from something else
         than an edit view.
         """
+        ksscore = self.getCommandSet('core')
+        zopecommands = self.getCommandSet('zope')
+        plonecommands = self.getCommandSet('plone')
+        
         if edit:
             locking = ILockable(self.context)
             if locking and not locking.can_safely_unlock():
-                manager = getMultiAdapter((self.context, self.request, self),
-                                          IViewletManager,
-                                          name='plone.abovecontent')
-                self.getCommandSet('refreshviewlet').refreshViewlet('plone-lock-status',
-                                                                    manager,
-                                                                    'plone.lockinfo')
-                self.getCommandSet('contentmenu').refreshContentMenu(id='contentActionMenus', 
-                                                                 name='plone.contentmenu')
+                selector = ksscore.getHtmlIdSelector('plone-lock-status')
+                zopecommands.refreshViewlet(selector,
+                                            'plone.abovecontent',
+                                            'plone.lockinfo')
+                plonecommands.refreshContentMenu()
 
                 return self.render()
-        self.getCommandSet('portalmessage').issuePortalMessage('')
+
+        plonecommands.issuePortalMessage('')
 
         parent_fieldname = "parent-fieldname-%s" % fieldname
         html = self.renderEditField(fieldname, templateId, macro)
         html = html.strip()
-        ksscore = self.getCommandSet('core')
         ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), html)
         ksscore.focus("#%s .firstToFocus" % parent_fieldname)
         return self.render()

@@ -68,7 +68,7 @@ class ValidationView(PloneKSSView):
         ksscore = self.getCommandSet('core')
         if errors:
             # give the portal message
-            self.getCommandSet('portalmessage').issuePortalMessage(
+            self.getCommandSet('plone').issuePortalMessage(
                 _(u'Please correct the indicated errors.'))
             # reset all error fields (as we only know the error ones.)
             ksscore.clearChildNodes(ksscore.getCssSelector('div.field div.fieldErrorBox'))
