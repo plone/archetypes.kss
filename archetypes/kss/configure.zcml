@@ -54,7 +54,7 @@
 	name="kss_field_decorator_view"
         permission="zope2.View"
         class=".fields.ATFieldDecoratorView"
-        allowed_attributes="getKssUIDClass getKssClassesInlineEditable getKssClasses"
+        allowed_attributes="getKssClassesInlineEditable getKssClasses"
         />
     
 </configure>

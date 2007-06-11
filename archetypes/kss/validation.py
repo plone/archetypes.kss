@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
 # Copyright (c) 2006
 # Authors:
 #   Christian Klinger <cklinger@novareto.de>, goschtl
@@ -26,8 +26,6 @@ from Products.CMFPlone import PloneMessageFactory as _
 from plone.app.kss.plonekssview import PloneKSSView
 from plone.app.kss.interfaces import IPloneKSSView
 
-from Products.CMFCore.utils import getToolByName
-
 SKIP_KSSVALIDATION_FIELDTYPES = ('image', 'file')
 
 class ValidationView(PloneKSSView):
@@ -38,14 +36,11 @@ class ValidationView(PloneKSSView):
     # Kss methods
     # --
 
-    def kssValidateField(self, fieldname, uid, value):
+    def kssValidateField(self, fieldname, value):
         '''Validate a given field
         '''
         # validate the field, actually
-        rc = getToolByName(self, 'reference_catalog')
-        context = rc.lookupObject(uid)
-        instance = context.aq_inner
-
+        instance = self.context.aq_inner
         field = instance.getField(fieldname)
         if field.type in SKIP_KSSVALIDATION_FIELDTYPES:
             return self.render()
