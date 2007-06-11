@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright (c) 2006
 # Authors:
 #   Jean-Paul Ladage <j.ladage@zestsoftware.nl>, jladage
@@ -34,6 +34,8 @@ from Acquisition import aq_inner
 from Products.Archetypes.event import ObjectEditedEvent
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
+
+from Products.CMFCore.utils import getToolByName
 
 class FieldsView(PloneKSSView):
     
@@ -95,7 +97,7 @@ class FieldsView(PloneKSSView):
                                       templateId=templateId)
         return res
 
-    def replaceField(self, fieldname, templateId, macro, edit=False):
+    def replaceField(self, fieldname, uid, templateId, macro, edit=False):
         """
         kss commands to replace the field value by the edit widget
 
@@ -105,9 +107,12 @@ class FieldsView(PloneKSSView):
         ksscore = self.getCommandSet('core')
         zopecommands = self.getCommandSet('zope')
         plonecommands = self.getCommandSet('plone')
-        
+
+        rc = getToolByName(self, 'reference_catalog')
+        context = rc.lookupObject(uid)
+
         if edit:
-            locking = ILockable(self.context)
+            locking = ILockable(context)
             if locking and not locking.can_safely_unlock():
                 selector = ksscore.getHtmlIdSelector('plone-lock-status')
                 zopecommands.refreshViewlet(selector,
@@ -139,24 +144,28 @@ class FieldsView(PloneKSSView):
         return self.render()
 
 
-    def saveField(self, fieldname, value, templateId, macro):
+    def saveField(self, fieldname, uid, value, templateId, macro):
         """
         This method saves the current value to the field. and returns the rendered
         view macro.
         """
         # We receive a dict in value.
         #
-        instance = self.context.aq_inner
+
+        rc = getToolByName(self, 'reference_catalog')
+        context = rc.lookupObject(uid)
+        instance = context.aq_inner
+        
         field = instance.getField(fieldname)
         value, kwargs = field.widget.process_form(instance, field, value)
         error = field.validate(value, instance, {})
         if not error and field.writeable(instance):
             setField = field.getMutator(instance)
             setField(value, **kwargs)
-            self.context.reindexObject() #XXX: Temp workaround, should be gone in AT 1.5
+            context.reindexObject() #XXX: Temp workaround, should be gone in AT 1.5
             
             descriptor = lifecycleevent.Attributes(IPortalObject, fieldname)
-            event.notify(ObjectEditedEvent(self.context, descriptor))
+            event.notify(ObjectEditedEvent(context, descriptor))
             
             return self.replaceWithView(fieldname, templateId, macro)
         else:
@@ -173,7 +182,14 @@ class FieldsView(PloneKSSView):
 # --
 
 class ATFieldDecoratorView(BrowserView):
-
+    def getKssUIDClass(self):
+        """
+        This method generates a class-name from the current context UID.
+        """
+        uid = self.context.UID()
+        
+        return "kssattr-atuid-%s" % uid
+    
     def getKssClasses(self, fieldname, templateId=None, macro=None):
         context = aq_inner(self.context)
         field = context.getField(fieldname)
