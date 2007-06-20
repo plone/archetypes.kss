@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 # Copyright (c) 2006
 # Authors:
 #   Christian Klinger <cklinger@novareto.de>, goschtl
@@ -26,7 +26,15 @@ from Products.CMFPlone import PloneMessageFactory as _
 from plone.app.kss.plonekssview import PloneKSSView
 from plone.app.kss.interfaces import IPloneKSSView
 
+from Products.CMFCore.utils import getToolByName
+
 SKIP_KSSVALIDATION_FIELDTYPES = ('image', 'file')
+
+from zope.deprecation import deprecated
+
+missing_uid_deprecation = \
+"This view does not provide a KSS instance UID as required. Falling back to the global " + \
+"context on inline-editing will be removed in Plone 3.5. Please update your templates."
 
 class ValidationView(PloneKSSView):
 
@@ -36,11 +44,20 @@ class ValidationView(PloneKSSView):
     # Kss methods
     # --
 
-    def kssValidateField(self, fieldname, value):
+    def kssValidateField(self, fieldname, value, uid=None):
         '''Validate a given field
         '''
         # validate the field, actually
-        instance = self.context.aq_inner
+
+        if uid is not None:
+            rc = getToolByName(self, 'reference_catalog')
+            context = rc.lookupObject(uid)
+        else:
+            deprecated(ValidationView, missing_uid_deprecation)
+            context = self.context
+
+        instance = context.aq_inner
+
         field = instance.getField(fieldname)
         if field.type in SKIP_KSSVALIDATION_FIELDTYPES:
             return self.render()
