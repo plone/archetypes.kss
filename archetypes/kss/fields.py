@@ -27,8 +27,6 @@ from plone.locking.interfaces import ILockable
 from zope.interface import implements
 from zope import lifecycleevent, event
 from zope.publisher.interfaces.browser import IBrowserView
-from zope.component import getMultiAdapter
-from zope.viewlet.interfaces import IViewletManager
 
 from Acquisition import aq_inner
 from Products.Archetypes.event import ObjectEditedEvent
@@ -39,8 +37,9 @@ from Products.CMFCore.utils import getToolByName
 from zope.deprecation import deprecated
 
 missing_uid_deprecation = \
-"This view does not provide a KSS instance UID as required. Falling back to the global " + \
-"context on inline-editing will be removed in Plone 3.5. Please update your templates."
+"This view does not provide a KSS instance UID as required. Falling back to "
+"the global context on inline-editing will be removed in Plone 3.5. Please "
+"update your templates."
 
 class FieldsView(PloneKSSView):
     
@@ -55,7 +54,8 @@ class FieldsView(PloneKSSView):
         """
         renders the macro coming from the view template
         """
-        template = self.context.restrictedTraverse(templateId)
+        context = aq_inner(self.context)
+        template = context.restrictedTraverse(templateId)
         
         if IBrowserView.providedBy(template):
             view = template
@@ -68,7 +68,7 @@ class FieldsView(PloneKSSView):
 
         viewMacro = template.macros[macro]
         res = self.view_field_wrapper(viewMacro=viewMacro,
-                                      context=self.context,
+                                      context=context,
                                       templateId=templateId)
         return res
 
@@ -76,11 +76,10 @@ class FieldsView(PloneKSSView):
         """
         renders the edit widget inside the macro coming from the view template
         """
-        context = self.context
+        context = aq_inner(self.context)
         fieldname = fieldname.split('archetypes-fieldname-')[-1]
         field = context.getField(fieldname)
         template = context.restrictedTraverse(templateId)
-        
         
         if IBrowserView.providedBy(template):
             view = template
@@ -112,16 +111,17 @@ class FieldsView(PloneKSSView):
         ksscore = self.getCommandSet('core')
         zopecommands = self.getCommandSet('zope')
         plonecommands = self.getCommandSet('plone')
+        context = aq_inner(self.context)
 
         if uid is not None:
-            rc = getToolByName(self, 'reference_catalog')
-            context = rc.lookupObject(uid)
+            rc = getToolByName(context, 'reference_catalog')
+            instance = rc.lookupObject(uid)
         else:
             deprecated(FieldsView, missing_uid_deprecation)
-            context = self.context
-            
+            instance = context
+
         if edit:
-            locking = ILockable(context)
+            locking = ILockable(instance)
             if locking and not locking.can_safely_unlock():
                 selector = ksscore.getHtmlIdSelector('plone-lock-status')
                 zopecommands.refreshViewlet(selector,
@@ -162,24 +162,22 @@ class FieldsView(PloneKSSView):
         #
 
         if uid is not None:
-            rc = getToolByName(self, 'reference_catalog')
-            context = rc.lookupObject(uid)
+            rc = getToolByName(aq_inner(self.context), 'reference_catalog')
+            instance = rc.lookupObject(uid)
         else:
             deprecated(FieldsView, missing_uid_deprecation)
-            context = self.context
+            instance = aq_inner(self.context)
 
-        instance = context.aq_inner
-        
         field = instance.getField(fieldname)
         value, kwargs = field.widget.process_form(instance, field, value)
         error = field.validate(value, instance, {})
         if not error and field.writeable(instance):
             setField = field.getMutator(instance)
             setField(value, **kwargs)
-            context.reindexObject() #XXX: Temp workaround, should be gone in AT 1.5
-            
+            instance.reindexObject() #XXX: Temp workaround, should be gone in AT 1.5
+
             descriptor = lifecycleevent.Attributes(IPortalObject, fieldname)
-            event.notify(ObjectEditedEvent(context, descriptor))
+            event.notify(ObjectEditedEvent(instance, descriptor))
             
             return self.replaceWithView(fieldname, templateId, macro)
         else:
@@ -196,11 +194,12 @@ class FieldsView(PloneKSSView):
 # --
 
 class ATFieldDecoratorView(BrowserView):
+
     def getKssUIDClass(self):
         """
         This method generates a class-name from the current context UID.
         """
-        uid = self.context.UID()
+        uid = aq_inner(self.context).UID()
         
         return "kssattr-atuid-%s" % uid
     

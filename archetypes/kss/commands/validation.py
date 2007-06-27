@@ -1,11 +1,15 @@
+from Acquisition import aq_inner
 
 from kss.core.kssview import CommandSet
 
+
 class ValidationCommands(CommandSet):
+
     __allow_access_to_unprotected_subobjects__ = 1
-    
+
     def issueFieldError(self, fieldname, error):
         'Issue this error message for the field'
+        context = aq_inner(self.context)
         ksscore = self.getCommandSet('core')
         selector = ksscore.getCssSelector('div#archetypes-fieldname-%s div.fieldErrorBox' % fieldname)
         if error:
@@ -15,7 +19,7 @@ class ValidationCommands(CommandSet):
             ksscore.clearChildNodes(selector)
             errorklass = ''
         klass = "field%s Archetypes%sfield" % (errorklass, fieldname)
-        kssattr = self.context.restrictedTraverse('kss_field_decorator_view').getKssClasses(fieldname)
+        kssattr = context.restrictedTraverse('kss_field_decorator_view').getKssClasses(fieldname)
         if kssattr:
             klass += ' ' + kssattr
         # set the field style in the required way

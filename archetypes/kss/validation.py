@@ -21,20 +21,21 @@
 
 from zope.interface import implements
 
+from Acquisition import aq_inner
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 
 from plone.app.kss.plonekssview import PloneKSSView
 from plone.app.kss.interfaces import IPloneKSSView
-
-from Products.CMFCore.utils import getToolByName
 
 SKIP_KSSVALIDATION_FIELDTYPES = ('image', 'file')
 
 from zope.deprecation import deprecated
 
 missing_uid_deprecation = \
-"This view does not provide a KSS instance UID as required. Falling back to the global " + \
-"context on inline-editing will be removed in Plone 3.5. Please update your templates."
+"This view does not provide a KSS instance UID as required. Falling back to "
+"the global context on inline-editing will be removed in Plone 3.5. Please "
+"update your templates."
 
 class ValidationView(PloneKSSView):
 
@@ -50,13 +51,11 @@ class ValidationView(PloneKSSView):
         # validate the field, actually
 
         if uid is not None:
-            rc = getToolByName(self, 'reference_catalog')
-            context = rc.lookupObject(uid)
+            rc = getToolByName(aq_inner(self.context), 'reference_catalog')
+            instance = rc.lookupObject(uid)
         else:
             deprecated(ValidationView, missing_uid_deprecation)
-            context = self.context
-
-        instance = context.aq_inner
+            instance = aq_inner(self.context)
 
         field = instance.getField(fieldname)
         if field.type in SKIP_KSSVALIDATION_FIELDTYPES:
@@ -78,7 +77,7 @@ class ValidationView(PloneKSSView):
         #errors = self.context.aq_inner.validate(self.request, errors={}, data=1, metadata=0)
         # this will skip some events but we don't care
         # the predicates should be passed from BaseObject.validate too
-        instance = self.context.aq_inner
+        instance = aq_inner(self.context)
         schema = instance.Schema()
         errors = validate(schema, instance, self.request, errors={}, data=1, metadata=0,
                 predicates=(lambda field: field.type not in SKIP_KSSVALIDATION_FIELDTYPES, ))
@@ -102,7 +101,6 @@ class ValidationView(PloneKSSView):
             # I just don't want to clean up AT form submit procedures
             self.commands.addCommand('plone-submitCurrentForm', ksscore.getSelector('samenode', ''))
         return self.render()
-
 
 
 # This is modified from Archetypes.Schema.validate
@@ -172,4 +170,3 @@ def validate(self, instance=None, REQUEST=None,
         if res:
             errors[field.getName()] = res
     return errors
-
