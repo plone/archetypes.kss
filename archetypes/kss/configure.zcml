@@ -47,6 +47,30 @@
         permission="cmf.ModifyPortalContent"
       />
 
+    <browser:page
+        for="Products.ATContentTypes.interface.document.IATDocument"
+        class=".fields.ATDocumentFieldsView"
+        name="replaceField"
+        attribute="replaceField"
+        permission="zope.Public"
+      />
+
+    <browser:page
+        for="Products.ATContentTypes.interface.document.IATDocument"
+        class=".fields.ATDocumentFieldsView"
+        name="replaceWithView"
+        attribute="replaceWithView"
+        permission="zope.Public"
+      />
+
+    <browser:page
+        for="Products.ATContentTypes.interface.document.IATDocument"
+        class=".fields.ATDocumentFieldsView"
+        name="saveField"
+        attribute="saveField"
+        permission="cmf.ModifyPortalContent"
+      />
+
     <!-- field decorator (non-ajax) views -->
 
     <browser:page

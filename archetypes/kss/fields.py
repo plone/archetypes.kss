@@ -17,7 +17,6 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 #
-
 from plone.app.kss.plonekssview import PloneKSSView
 from plone.app.kss.interfaces import IPloneKSSView
 from plone.app.kss.interfaces import IPortalObject
@@ -152,7 +151,6 @@ class FieldsView(PloneKSSView):
         ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), html)
         return self.render()
 
-
     def saveField(self, fieldname, value, templateId, macro, uid=None):
         """
         This method saves the current value to the field. and returns the rendered
@@ -188,6 +186,39 @@ class FieldsView(PloneKSSView):
             self.getCommandSet('atvalidation').issueFieldError(fieldname, error)
             return self.render()
 
+class ATDocumentFieldsView(FieldsView):
+
+    def isTableOfContentsEnabled(self):
+        getTableContents = getattr(self.context, 'getTableContents', None)
+        result = False
+        if getTableContents is not None:
+            result = getTableContents()
+        return result
+
+    def replaceField(self, fieldname, templateId, macro, edit=False):
+        FieldsView.replaceField(self, fieldname, templateId, macro, edit)
+        if fieldname == "text" and self.isTableOfContentsEnabled(): 
+            self.getCommandSet('core').setStyle("#document-toc", name="display", value="none")
+        return self.render()
+
+    def replaceWithView(self, fieldname, templateId, macro):
+        FieldsView.replaceWithView(self, fieldname, templateId, macro)
+        if fieldname == "text" and self.isTableOfContentsEnabled(): 
+            self.getCommandSet('core').setStyle("#document-toc", name="display", value="block")
+            self.getCommandSet('plone-legacy').createTableOfContents()
+        return self.render()
+    
+    def saveField(self, fieldname, value, templateId, macro):
+        FieldsView.saveField(self, fieldname, value, templateId, macro)
+        if fieldname == "text" and self.isTableOfContentsEnabled(): 
+            self.getCommandSet('plone-legacy').createTableOfContents()
+            #manager = getMultiAdapter((self.context, self.request, self),
+            #                          IViewletManager,
+            #                          name='plone.abovecontentbody')
+            #self.getCommandSet('refreshviewlet').refreshViewlet('document-toc',
+            #                                                    manager,
+            #                                                    'plone.tableofcontents')
+        return self.render()
 
 # --
 # (Non-ajax) browser view for decorating the field
