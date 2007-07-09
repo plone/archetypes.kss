@@ -111,14 +111,12 @@ class FieldsView(PloneKSSView):
         zopecommands = self.getCommandSet('zope')
         plonecommands = self.getCommandSet('plone')
         context = aq_inner(self.context)
-
         if uid is not None:
             rc = getToolByName(context, 'reference_catalog')
             instance = rc.lookupObject(uid)
         else:
             deprecated(FieldsView, missing_uid_deprecation)
             instance = context
-
         if edit:
             locking = ILockable(instance)
             if locking and not locking.can_safely_unlock():
@@ -196,7 +194,7 @@ class ATDocumentFieldsView(FieldsView):
         return result
 
     def replaceField(self, fieldname, templateId, macro, edit=False):
-        FieldsView.replaceField(self, fieldname, templateId, macro, edit)
+        FieldsView.replaceField(self, fieldname, templateId, macro, edit=edit)
         if fieldname == "text" and self.isTableOfContentsEnabled(): 
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="none")
         return self.render()
