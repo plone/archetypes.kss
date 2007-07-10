@@ -4,6 +4,10 @@ Changelog for archetypes.kss
 
 archetypes.kss - 1.2dev Unreleased
 
+    - ...
+
+archetypes.kss - 1.2-rc1 Released 2007-07-08
+
     - Cleaned up self.context usage. In browser views in Zope2 you need to do
       an aq_inner on self.context before using it.
       [hannosch]
