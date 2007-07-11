@@ -119,14 +119,17 @@ class FieldsView(PloneKSSView):
             instance = context
         if edit:
             locking = ILockable(instance)
-            if locking and not locking.can_safely_unlock():
-                selector = ksscore.getHtmlIdSelector('plone-lock-status')
-                zopecommands.refreshViewlet(selector,
-                                            'plone.abovecontent',
-                                            'plone.lockinfo')
-                plonecommands.refreshContentMenu()
+            if locking:
+                if not locking.can_safely_unlock():
+                    selector = ksscore.getHtmlIdSelector('plone-lock-status')
+                    zopecommands.refreshViewlet(selector,
+                                                'plone.abovecontent',
+                                                'plone.lockinfo')
+                    plonecommands.refreshContentMenu()
 
-                return self.render()
+                    return self.render()
+                else: # were are locking the content
+                    locking.lock()
 
         plonecommands.issuePortalMessage('')
 
@@ -138,10 +141,21 @@ class FieldsView(PloneKSSView):
         return self.render()
 
 
-    def replaceWithView(self, fieldname, templateId, macro):
+    def replaceWithView(self, fieldname, templateId, macro, uid=None, edit=False):
         """
         kss commands to replace the edit widget by the field view
         """
+        context = aq_inner(self.context)
+        if uid is not None:
+            rc = getToolByName(context, 'reference_catalog')
+            instance = rc.lookupObject(uid)
+        else:
+            deprecated(FieldsView, missing_uid_deprecation)
+            instance = context
+
+        locking = ILockable(instance)
+        if locking and locking.can_safely_unlock():
+            locking.unlock()
         parent_fieldname = "parent-fieldname-%s" % fieldname
         html = self.renderViewField(fieldname, templateId, macro)
         html = html.strip()
@@ -199,8 +213,8 @@ class ATDocumentFieldsView(FieldsView):
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="none")
         return self.render()
 
-    def replaceWithView(self, fieldname, templateId, macro):
-        FieldsView.replaceWithView(self, fieldname, templateId, macro)
+    def replaceWithView(self, fieldname, templateId, macro, uid=None, edit=False):
+        FieldsView.replaceWithView(self, fieldname, templateId, macro, uid, edit)
         if fieldname == "text" and self.isTableOfContentsEnabled(): 
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="block")
             self.getCommandSet('plone-legacy').createTableOfContents()
