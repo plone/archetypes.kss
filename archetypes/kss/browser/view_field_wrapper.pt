@@ -6,7 +6,11 @@
                        here nocall:options/context;
                        kssClassesView context/@@kss_field_decorator_view;
                        getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;
-                       templateId options/templateId">
+                       templateId options/templateId;
+                       fieldName options/fieldName;
+                       field python:context.getField(fieldName);
+                       widget nocall:field/widget;
+                       accessor python:field.getAccessor(context);">
     <metal:viewMacro use-macro="options/viewMacro" />
   </tal:defines>
 </tal:block>

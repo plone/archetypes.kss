@@ -17,6 +17,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 #
+from zope.component import getMultiAdapter
+from zope.viewlet.interfaces import IViewletManager
+
 from plone.app.kss.plonekssview import PloneKSSView
 from plone.app.kss.interfaces import IPloneKSSView
 from plone.app.kss.interfaces import IPortalObject
@@ -54,6 +57,20 @@ class FieldsView(PloneKSSView):
         renders the macro coming from the view template
         """
         context = aq_inner(self.context)
+        template = self.getTemplate(templateId)
+
+        viewMacro = template.macros[macro]
+        res = self.view_field_wrapper(viewMacro=viewMacro,
+                                      context=context,
+                                      templateId=templateId,
+                                      fieldName=fieldname)
+        return res
+
+    def getTemplate(self, templateId):
+        """
+        traverse/search template
+        """
+        context = aq_inner(self.context)
         template = context.restrictedTraverse(templateId)
         
         if IBrowserView.providedBy(template):
@@ -64,32 +81,18 @@ class FieldsView(PloneKSSView):
                     break
             if template is None:
                 raise KeyError("Unable to find template for view %s" % templateId)
+        return template
 
-        viewMacro = template.macros[macro]
-        res = self.view_field_wrapper(viewMacro=viewMacro,
-                                      context=context,
-                                      templateId=templateId)
-        return res
 
     def renderEditField(self, fieldname, templateId, macro):
         """
         renders the edit widget inside the macro coming from the view template
         """
         context = aq_inner(self.context)
+        template = self.getTemplate(templateId)
+        containingMacro = template.macros[macro]
         fieldname = fieldname.split('archetypes-fieldname-')[-1]
         field = context.getField(fieldname)
-        template = context.restrictedTraverse(templateId)
-        
-        if IBrowserView.providedBy(template):
-            view = template
-            for attr in ('index', 'template', '__call__'):
-                template = getattr(view, attr, None)
-                if template is not None and hasattr(template, 'macros'):
-                    break
-            if template is None:
-                raise KeyError("Unable to find template for view %s" % templateId)
-        
-        containingMacro = template.macros[macro]
         widget = field.widget
         widgetMacro = widget('edit', context)
         
@@ -208,9 +211,9 @@ class ATDocumentFieldsView(FieldsView):
         return result
 
     def replaceField(self, fieldname, templateId, macro, edit=False):
-        FieldsView.replaceField(self, fieldname, templateId, macro, edit=edit)
         if fieldname == "text" and self.isTableOfContentsEnabled(): 
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="none")
+        FieldsView.replaceField(self, fieldname, templateId, macro, edit)
         return self.render()
 
     def replaceWithView(self, fieldname, templateId, macro, uid=None, edit=False):
@@ -223,7 +226,7 @@ class ATDocumentFieldsView(FieldsView):
     def saveField(self, fieldname, value, templateId, macro):
         FieldsView.saveField(self, fieldname, value, templateId, macro)
         if fieldname == "text" and self.isTableOfContentsEnabled(): 
-            self.getCommandSet('plone-legacy').createTableOfContents()
+            self.getCommandSet('plone-legacy').createTableOfContents() 
             #manager = getMultiAdapter((self.context, self.request, self),
             #                          IViewletManager,
             #                          name='plone.abovecontentbody')
@@ -257,8 +260,11 @@ class ATFieldDecoratorView(BrowserView):
                 classstring += ' kssattr-templateId-%s' % templateId
             if macro is not None:
                 classstring += ' kssattr-macro-%s' % macro
-            else:
-                classstring += ' kssattr-macro-%s-field-view' % fieldname
+            # XXX commented out to avoid macro showing up twice
+            # not removed since it might be needed in a use case I forgot about
+            # __gotcha
+            #else:
+            #    classstring += ' kssattr-macro-%s-field-view' % fieldname
         else:
             classstring = ''
         return classstring
