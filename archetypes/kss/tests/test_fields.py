@@ -27,7 +27,6 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
 
     def afterSetUp(self):
         PloneTestCase.PloneTestCase.afterSetUp(self)
-        self.loadCoreConfig(kss_core=False)
         # commands will be rendered as data structures,
         self.setDebugRequest()
         self.loginAsPortalOwner()
@@ -40,7 +39,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
     # --
 
     def testReplaceField(self):
-        self.view.context.changeSkin('Plone Default')
+        self.view.context.changeSkin('Plone Default', self.view.request)
         result = self.view.replaceField('title', 'kss_generic_macros', 'title-field-view')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
@@ -53,7 +52,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         ])
 
     def testReplaceWithView(self):
-        self.view.context.changeSkin('Plone Default')
+        self.view.context.changeSkin('Plone Default', self.view.request)
         result = self.view.replaceWithView('title', 'kss_generic_macros', 'title-field-view')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
@@ -89,9 +88,9 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         # writeable
         view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')
         result = view.getKssClasses('title')
-        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-macro-title-field-view')
+        self.assertEqual(result, ' kssattr-atfieldname-title')
         result = view.getKssClasses('title', 'template')
-        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template kssattr-macro-title-field-view')
+        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template')
         result = view.getKssClasses('title', 'template', 'macro')
         self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template kssattr-macro-macro')
         self.logout()
@@ -103,7 +102,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         # writeable
         view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')
         result = view.getKssClassesInlineEditable('title', 'template')
-        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template kssattr-macro-title-field-view inlineEditable')
+        self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template inlineEditable')
         result = view.getKssClassesInlineEditable('title', 'template', 'macro')
         self.assertEqual(result, ' kssattr-atfieldname-title kssattr-templateId-template kssattr-macro-macro inlineEditable')
         self.logout()

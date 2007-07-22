@@ -26,7 +26,6 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
 
     def afterSetUp(self):
         PloneTestCase.PloneTestCase.afterSetUp(self)
-        self.loadCoreConfig(kss_core=False)
         # commands will be rendered as data structures,
         self.setDebugRequest()
         self.loginAsPortalOwner()
