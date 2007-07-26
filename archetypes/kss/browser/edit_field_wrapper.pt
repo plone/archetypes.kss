@@ -15,7 +15,7 @@
                          templateId options/templateId;
                          ">
     <metal:containingMacro use-macro="options/containingMacro"><metal:insideSlot fill-slot="inside">
-         <form tal:attributes="class string:field inlineForm;
+         <form tal:attributes="class string:field inlineForm enableUnloadProtection;
                              id string:kss-inlineform-$fieldName;">
            <metal:editWidget use-macro="options/widgetMacro" />
            <div class="formControls">
