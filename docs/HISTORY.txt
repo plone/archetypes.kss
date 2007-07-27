@@ -6,6 +6,11 @@ archetypes.kss - 1.2dev Unreleased
 
     - ...
 
+archetypes.kss - 1.2-rc2 Released 2007-07-27
+
+    - inline edit for archetypes widget in view mode, first steps
+      [gotcha]
+
 archetypes.kss - 1.2-rc1.1 Released 2007-07-12
 
     - Prepare for release
