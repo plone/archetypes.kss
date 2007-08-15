@@ -21,9 +21,11 @@
            <div class="formControls">
              <input name="kss-save"
                     value="Save" type="button"
+                    i18n:attributes="value label_save;"
                     class="context" />
              <input name="kss-cancel"
                     value="Cancel" type="button"
+                    i18n:attributes="value label_cancel;"
                     class="standalone" />
            </div>
          </form>
