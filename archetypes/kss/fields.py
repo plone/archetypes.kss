@@ -17,8 +17,8 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 #
-from zope.component import getMultiAdapter
-from zope.viewlet.interfaces import IViewletManager
+#from zope.component import getMultiAdapter
+#from zope.viewlet.interfaces import IViewletManager
 
 from plone.app.kss.plonekssview import PloneKSSView
 from plone.app.kss.interfaces import IPloneKSSView
@@ -210,14 +210,14 @@ class ATDocumentFieldsView(FieldsView):
             result = getTableContents()
         return result
 
-    def replaceField(self, fieldname, templateId, macro, edit=False):
+    def replaceField(self, fieldname, templateId, macro, uid=None, edit=False):
         if fieldname == "text" and self.isTableOfContentsEnabled(): 
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="none")
-        FieldsView.replaceField(self, fieldname, templateId, macro, edit)
+        FieldsView.replaceField(self, fieldname, templateId, macro, uid=uid, edit=edit)
         return self.render()
 
     def replaceWithView(self, fieldname, templateId, macro, uid=None, edit=False):
-        FieldsView.replaceWithView(self, fieldname, templateId, macro, uid, edit)
+        FieldsView.replaceWithView(self, fieldname, templateId, macro, uid=uid, edit=edit)
         if fieldname == "text" and self.isTableOfContentsEnabled(): 
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="block")
             self.getCommandSet('plone-legacy').createTableOfContents()
