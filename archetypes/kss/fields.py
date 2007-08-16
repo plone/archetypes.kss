@@ -103,6 +103,9 @@ class FieldsView(PloneKSSView):
                                       templateId=templateId)
         return res
 
+
+    # XXX XXX TODO for 3.0.1: see if we really need edit at all or we can remoce it (ree)
+
     def replaceField(self, fieldname, templateId, macro, uid=None, edit=False):
         """
         kss commands to replace the field value by the edit widget
