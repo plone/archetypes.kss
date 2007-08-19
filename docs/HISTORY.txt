@@ -2,7 +2,7 @@ Changelog for archetypes.kss
 
     (name of developer listed in brackets)
 
-archetypes.kss - 1.2dev Unreleased
+archetypes.kss - 1.4dev Unreleased
 
     - ...
 
