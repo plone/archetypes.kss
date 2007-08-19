@@ -24,6 +24,7 @@ from zope import component
 from zope.component import adapter
 from kss.core.interfaces import IKSSView
 from archetypes.kss.interfaces import IVersionedFieldModifiedEvent
+from kss.core.BeautifulSoup import BeautifulSoup
 
 PloneTestCase.setupPloneSite()
 
@@ -144,6 +145,35 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         result = view.getKssClasses('title')
         # not writeable
         self.assertEqual(result, '')
+
+    def testVersionPreviewIsNotInlineEditable(self):
+        """If the kss_inline_editable variable is defined to False
+        in a page template, all the fields will be globally prohibited 
+        to be editable. This works via the getKssClasses method.
+        Similarly, is suppress_preview is set to true, inline
+        editing is prohibited. This is set from CMFEditions, in the
+        versions_history_form.
+
+        In this test we check that the versions history is not
+        inline editable at all.
+        """
+        obj = self.portal['front-page']
+        # Make sure we actually have a revision
+        pr = self.portal.portal_repository
+        pr.save(obj)
+        # Render versions history of the front page
+        obj.REQUEST.form['version_id'] = '0'
+        rendered = obj.versions_history_form()
+        soup = BeautifulSoup(rendered)
+        # check that inline edit is not active, by looking at title
+        tag = soup.find('h1', id='parent-fieldname-title')
+        klass = tag['class']
+        # just to check that we are looking at the right bit...
+        self.assert_('documentFirstHeading' in klass)
+        # ... and now see we are really not inline editable:
+        self.assert_('inlineEditable' not in klass)
+        self.assert_('kssattr-templateId-' not in klass)
+        self.assert_('kssattr-macro-' not in klass)
 
 def test_suite():
     return unittest.TestSuite((

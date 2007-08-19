@@ -39,6 +39,7 @@ from Products.CMFCore.utils import getToolByName
 from zope.deprecation import deprecated
 
 import events
+from utils import get_econtext
 
 missing_uid_deprecation = \
 "This view does not provide a KSS instance UID as required. Falling back to "
@@ -258,12 +259,36 @@ class ATFieldDecoratorView(BrowserView):
         
         return "kssattr-atuid-%s" % uid
     
+    def _global_kss_inline_editable(self):
+        """With a nasty although not unusual hack, we reach
+        out to the caller template, and examine the global
+        tal variable kss_inline_editable. If it is defined,
+        and if it is defined to false, we will prohibit
+        inline editing everywhere in the template.
+        We apply this 'magic' because the signature to getKssClasses
+        is already too complex, and it would be undesirable to
+        complicate it some more.
+        """
+        econtext = get_econtext()
+        if econtext is None:
+            # tests, probably
+            return True
+        # kss_inline_editable can be set to false in a template, and this
+        # will prohibit inline editing in the page
+        kss_inline_editable = econtext.vars.get('kss_inline_editable', True)
+        # In addition we also check suppress_preview.
+        # suppress_preview is set by CMFEditions, when version preview is shown
+        # This means inline editing should be disabled globally
+        suppress_preview = econtext.vars.get('suppress_preview', False)
+        return kss_inline_editable and not suppress_preview
+
     def getKssClasses(self, fieldname, templateId=None, macro=None):
         context = aq_inner(self.context)
         field = context.getField(fieldname)
         # field can be None when widgets are used without fields
         # check whether field is valid
-        if field is not None and field.writeable(context):
+        global_kss_inline_editable = self._global_kss_inline_editable()
+        if global_kss_inline_editable and field is not None and field.writeable(context):
             classstring = ' kssattr-atfieldname-%s' % fieldname
             if templateId is not None:
                 classstring += ' kssattr-templateId-%s' % templateId
