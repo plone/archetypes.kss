@@ -81,4 +81,9 @@
         allowed_attributes="getKssUIDClass getKssClassesInlineEditable getKssClasses"
         />
     
+    
+    <!-- event listener for versioning of inline edit -->
+
+    <subscriber handler=".fields_versioning.versionObjectBecauseFieldChanged"/>
+
 </configure>

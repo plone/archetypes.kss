@@ -20,8 +20,16 @@
 import unittest
 from Products.PloneTestCase import PloneTestCase
 from plone.app.kss.tests.kss_and_plone_layer import KSSAndPloneTestCase
+from zope import component
+from zope.component import adapter
+from kss.core.interfaces import IKSSView
+from archetypes.kss.interfaces import IVersionedFieldModifiedEvent
 
 PloneTestCase.setupPloneSite()
+
+@adapter(None, IKSSView, IVersionedFieldModifiedEvent)
+def field_modified_handler(ob, view, event):
+    ob._eventCaught = True
 
 class FieldsViewTestCase(KSSAndPloneTestCase):
 
@@ -59,6 +67,8 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
              ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
             ])
 
+    # XXX this test should test without events, so it should stop events listening
+    # but we have no more method for that
     def testSaveField(self):
         view = self.view
         result = view.saveField('title', {'title':'My Title'}, 
@@ -73,6 +83,8 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
                              'kss_generic_macros', 'description-field-view')
         self.assertEqual('Woot a funky description!', self.portal['front-page'].Description())
     
+
+    # XXX note how these tests are wwrong, obviously events are not listened in this setup
     def testSaveFieldWithEvents(self):
         view = self.view
         result = view.saveField('title', {'title':'My Title'}, 
@@ -83,6 +95,22 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
                              'kss_generic_macros', 'description-field-view')
         self.assertEqual('Woot a funky description!', self.portal['front-page'].Description())
 
+    # XXX this test would only run, if events are really listened (which they are not) 
+    def _XXX_testSaveFieldWithVersioning(self):
+        view = self.view
+        component.provideHandler(field_modified_handler)
+        try:
+            res = view.saveField('title', {'title':'My Title'}, 
+                                    'kss_generic_macros', 'title-field-view')
+            self.assert_(getattr(view.context, '_eventCaught', False))
+            view.context._eventCaught = False
+            res = view.saveField('description',
+                                 {'description':'Woot a funky description!'},
+                                 'kss_generic_macros', 'description-field-view')
+            self.assert_(getattr(view.context, '_eventCaught', False))
+        finally:
+            sm = component.getSiteManager()
+            sm.unregisterHandler(field_modified_handler)
 
     def testMarkerInATField(self):
         # writeable

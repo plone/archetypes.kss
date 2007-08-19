@@ -38,6 +38,8 @@ from Products.CMFCore.utils import getToolByName
 
 from zope.deprecation import deprecated
 
+import events
+
 missing_uid_deprecation = \
 "This view does not provide a KSS instance UID as required. Falling back to "
 "the global context on inline-editing will be removed in Plone 3.5. Please "
@@ -190,6 +192,10 @@ class FieldsView(PloneKSSView):
         if not error and field.writeable(instance):
             setField = field.getMutator(instance)
             setField(value, **kwargs)
+
+            # send event that will invoke versioning
+            events.fieldsModified(instance, fieldname)
+
             instance.reindexObject() #XXX: Temp workaround, should be gone in AT 1.5
 
             descriptor = lifecycleevent.Attributes(IPortalObject, fieldname)
