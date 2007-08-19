@@ -6,6 +6,9 @@ archetypes.kss - 1.4dev Unreleased
 
     - ...
 
+    - implement versioning work with inline edit (fixes #6938)
+      [ree]
+
 archetypes.kss - 1.2 Released 2007-08-17
 
     - Fix bugs and test layer
