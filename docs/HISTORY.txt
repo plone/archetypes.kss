@@ -2,10 +2,6 @@ Changelog for archetypes.kss
 
     (name of developer listed in brackets)
 
-archetypes.kss - 1.2dev Unreleased
-
-    - ...
-
 archetypes.kss - 1.2-0.1 Released 2007-08-21
 
     - Make sure inline edit is not active in the versioning preview. 
