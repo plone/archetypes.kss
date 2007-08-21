@@ -20,8 +20,17 @@
 import unittest
 from Products.PloneTestCase import PloneTestCase
 from plone.app.kss.tests.kss_and_plone_layer import KSSAndPloneTestCase
+from zope import component
+from zope.component import adapter
+from kss.core.interfaces import IKSSView
+from archetypes.kss.interfaces import IVersionedFieldModifiedEvent
+from kss.core.BeautifulSoup import BeautifulSoup
 
 PloneTestCase.setupPloneSite()
+
+@adapter(None, IKSSView, IVersionedFieldModifiedEvent)
+def field_modified_handler(ob, view, event):
+    ob._eventCaught = True
 
 class FieldsViewTestCase(KSSAndPloneTestCase):
 
@@ -59,6 +68,8 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
              ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
             ])
 
+    # XXX this test should test without events, so it should stop events listening
+    # but we have no more method for that
     def testSaveField(self):
         view = self.view
         result = view.saveField('title', {'title':'My Title'}, 
@@ -73,6 +84,8 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
                              'kss_generic_macros', 'description-field-view')
         self.assertEqual('Woot a funky description!', self.portal['front-page'].Description())
     
+
+    # XXX note how these tests are wwrong, obviously events are not listened in this setup
     def testSaveFieldWithEvents(self):
         view = self.view
         result = view.saveField('title', {'title':'My Title'}, 
@@ -83,6 +96,22 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
                              'kss_generic_macros', 'description-field-view')
         self.assertEqual('Woot a funky description!', self.portal['front-page'].Description())
 
+    # XXX this test would only run, if events are really listened (which they are not) 
+    def _XXX_testSaveFieldWithVersioning(self):
+        view = self.view
+        component.provideHandler(field_modified_handler)
+        try:
+            res = view.saveField('title', {'title':'My Title'}, 
+                                    'kss_generic_macros', 'title-field-view')
+            self.assert_(getattr(view.context, '_eventCaught', False))
+            view.context._eventCaught = False
+            res = view.saveField('description',
+                                 {'description':'Woot a funky description!'},
+                                 'kss_generic_macros', 'description-field-view')
+            self.assert_(getattr(view.context, '_eventCaught', False))
+        finally:
+            sm = component.getSiteManager()
+            sm.unregisterHandler(field_modified_handler)
 
     def testMarkerInATField(self):
         # writeable
@@ -116,6 +145,35 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         result = view.getKssClasses('title')
         # not writeable
         self.assertEqual(result, '')
+
+    def testVersionPreviewIsNotInlineEditable(self):
+        """If the kss_inline_editable variable is defined to False
+        in a page template, all the fields will be globally prohibited 
+        to be editable. This works via the getKssClasses method.
+        Similarly, is suppress_preview is set to true, inline
+        editing is prohibited. This is set from CMFEditions, in the
+        versions_history_form.
+
+        In this test we check that the versions history is not
+        inline editable at all.
+        """
+        obj = self.portal['front-page']
+        # Make sure we actually have a revision
+        pr = self.portal.portal_repository
+        pr.save(obj)
+        # Render versions history of the front page
+        obj.REQUEST.form['version_id'] = '0'
+        rendered = obj.versions_history_form()
+        soup = BeautifulSoup(rendered)
+        # check that inline edit is not active, by looking at title
+        tag = soup.find('h1', id='parent-fieldname-title')
+        klass = tag['class']
+        # just to check that we are looking at the right bit...
+        self.assert_('documentFirstHeading' in klass)
+        # ... and now see we are really not inline editable:
+        self.assert_('inlineEditable' not in klass)
+        self.assert_('kssattr-templateId-' not in klass)
+        self.assert_('kssattr-macro-' not in klass)
 
 def test_suite():
     return unittest.TestSuite((
