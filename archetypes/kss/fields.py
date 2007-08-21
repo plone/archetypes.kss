@@ -55,19 +55,12 @@ class FieldsView(PloneKSSView):
     view_field_wrapper = ZopeTwoPageTemplateFile('browser/view_field_wrapper.pt')
     edit_field_wrapper = ZopeTwoPageTemplateFile('browser/edit_field_wrapper.pt')
 
-    def renderViewField(self, fieldname, templateId, macro, uid=None):
+    def renderViewField(self, fieldname, templateId, macro):
         """
         renders the macro coming from the view template
         """
-
-        if uid is not None:
-            rc = getToolByName(aq_inner(self.context), 'reference_catalog')
-            context = rc.lookupObject(uid)
-        else:
-            deprecated(FieldsView, missing_uid_deprecation)
-            context = aq_inner(self.context)
-
-        template = self.getTemplate(templateId, uid)
+        context = aq_inner(self.context)
+        template = self.getTemplate(templateId)
 
         viewMacro = template.macros[macro]
         res = self.view_field_wrapper(viewMacro=viewMacro,
@@ -76,18 +69,11 @@ class FieldsView(PloneKSSView):
                                       fieldName=fieldname)
         return res
 
-    def getTemplate(self, templateId, uid=None):
+    def getTemplate(self, templateId):
         """
         traverse/search template
         """
-
-        if uid is not None:
-            rc = getToolByName(aq_inner(self.context), 'reference_catalog')
-            context = rc.lookupObject(uid)
-        else:
-            deprecated(FieldsView, missing_uid_deprecation)
-            context = aq_inner(self.context)
-
+        context = aq_inner(self.context)
         template = context.restrictedTraverse(templateId)
         
         if IBrowserView.providedBy(template):
@@ -101,19 +87,12 @@ class FieldsView(PloneKSSView):
         return template
 
 
-    def renderEditField(self, fieldname, templateId, macro, uid=None):
+    def renderEditField(self, fieldname, templateId, macro):
         """
         renders the edit widget inside the macro coming from the view template
         """
-
-        if uid is not None:
-            rc = getToolByName(aq_inner(self.context), 'reference_catalog')
-            context = rc.lookupObject(uid)
-        else:
-            deprecated(FieldsView, missing_uid_deprecation)
-            context = aq_inner(self.context)
-
-        template = self.getTemplate(templateId, uid)
+        context = aq_inner(self.context)
+        template = self.getTemplate(templateId)
         containingMacro = template.macros[macro]
         fieldname = fieldname.split('archetypes-fieldname-')[-1]
         field = context.getField(fieldname)
@@ -164,7 +143,7 @@ class FieldsView(PloneKSSView):
         plonecommands.issuePortalMessage('')
 
         parent_fieldname = "parent-fieldname-%s" % fieldname
-        html = self.renderEditField(fieldname, templateId, macro, uid)
+        html = self.renderEditField(fieldname, templateId, macro)
         html = html.strip()
         ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), html)
         ksscore.focus("#%s .firstToFocus" % parent_fieldname)
@@ -175,7 +154,6 @@ class FieldsView(PloneKSSView):
         """
         kss commands to replace the edit widget by the field view
         """
-
         context = aq_inner(self.context)
         if uid is not None:
             rc = getToolByName(context, 'reference_catalog')
@@ -188,7 +166,7 @@ class FieldsView(PloneKSSView):
         if locking and locking.can_safely_unlock():
             locking.unlock()
         parent_fieldname = "parent-fieldname-%s" % fieldname
-        html = self.renderViewField(fieldname, templateId, macro, uid)
+        html = self.renderViewField(fieldname, templateId, macro)
         html = html.strip()
         ksscore = self.getCommandSet('core')
         ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), html)
@@ -224,7 +202,7 @@ class FieldsView(PloneKSSView):
             descriptor = lifecycleevent.Attributes(IPortalObject, fieldname)
             event.notify(ObjectEditedEvent(instance, descriptor))
             
-            return self.replaceWithView(fieldname, templateId, macro, uid)
+            return self.replaceWithView(fieldname, templateId, macro)
         else:
             if not error:
                 # XXX This should not actually happen...
