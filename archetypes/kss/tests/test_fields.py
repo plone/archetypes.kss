@@ -113,6 +113,99 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
             sm = component.getSiteManager()
             sm.unregisterHandler(field_modified_handler)
 
+    # XXX these tests with a provided target node id are a bit silly because the feature
+    # is not currently in use in any templates -- we provide a target node id of
+    # 'parent-fieldname-title' which is the default anyway -- but the tests make sure
+    # this api extension work to some degree.
+    
+    def testReplaceFieldWithProvidedTargetNodeId(self):
+        self.view.context.changeSkin('Plone Default', self.view.request)
+        target = 'parent-fieldname-title'
+        result = self.view.replaceField('title', 'kss_generic_macros', 'title-field-view', target=target)
+        self.assertEqual([(r['name'], r['selector'], r['selectorType'])
+                             for r in result], [
+            ('setStyle', '.portalMessage', 'css'),
+            ('replaceInnerHTML', 'kssPortalMessage', 'htmlid'),
+            ('setAttribute', 'kssPortalMessage', 'htmlid'),
+            ('setStyle', 'kssPortalMessage', 'htmlid'),
+            ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
+            ('focus', '#parent-fieldname-title .firstToFocus', '')
+        ])
+
+    def testReplaceWithViewWithProvidedTargetNodeId(self):
+        self.view.context.changeSkin('Plone Default', self.view.request)
+        target = 'parent-fieldname-title'
+        result = self.view.replaceWithView('title', 'kss_generic_macros', 'title-field-view', target=target)
+        self.assertEqual([(r['name'], r['selector'], r['selectorType'])
+                             for r in result], [
+             ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
+            ])
+
+    def testSaveFieldWithProvidedTargetNodeId(self):
+        view = self.view
+        target = 'parent-fieldname-title'
+        result = view.saveField('title', {'title':'My Title'}, 
+                                'kss_generic_macros', 'title-field-view', target=target)
+        self.assertEqual([(r['name'], r['selector'], r['selectorType'])
+                             for r in result], [
+             ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
+            ])
+        self.assertEqual('My Title', self.portal['front-page'].Title())
+
+    def testReplaceFieldWithProvidedContext(self):
+        # set the global context to /news
+        context = self.portal['news']
+        view = context.restrictedTraverse('saveField')
+        context.changeSkin('Plone Default', view.request)
+
+        frontpage_uid = self.portal['front-page'].UID()
+        result = view.replaceField('title', 'kss_generic_macros', 'title-field-view', uid=frontpage_uid)
+
+        self.assertEqual([(r['name'], r['selector'], r['selectorType'])
+                             for r in result], [
+            ('setStyle', '.portalMessage', 'css'),
+            ('replaceInnerHTML', 'kssPortalMessage', 'htmlid'),
+            ('setAttribute', 'kssPortalMessage', 'htmlid'),
+            ('setStyle', 'kssPortalMessage', 'htmlid'),
+            ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
+            ('focus', '#parent-fieldname-title .firstToFocus', '')
+        ])
+
+        # make sure we've got the right context:
+        replaceHTML = ''.join([r['params'].get('html', '') for r in result])
+        self.assertEqual(u"Welcome to Plone" in replaceHTML, True)       
+
+    def testReplaceWithViewWithProvidedContext(self):
+        # set the global context to /news
+        context = self.portal['news']
+        view = context.restrictedTraverse('saveField')
+        context.changeSkin('Plone Default', view.request)
+
+        frontpage_uid = self.portal['front-page'].UID()
+        result = view.replaceWithView('title', 'kss_generic_macros', 'title-field-view', uid=frontpage_uid)
+
+        self.assertEqual([(r['name'], r['selector'], r['selectorType'])
+                             for r in result], [
+             ('replaceHTML', 'parent-fieldname-title', 'htmlid'),
+            ])
+
+        # make sure we've got the right context:
+        replaceHTML = ''.join([r['params'].get('html', '') for r in result])
+        self.assertEqual(u"Welcome to Plone" in replaceHTML, True)       
+
+    def testSaveFieldWithProvidedContext(self):
+        # set the global context to /news
+        context = self.portal['news']
+        view = context.restrictedTraverse('saveField')
+        context.changeSkin('Plone Default', view.request)
+
+        frontpage_uid = self.portal['front-page'].UID()
+        result = view.saveField('title', {'title': 'My Title'},
+                                'kss_generic_macros', 'title-field-view', uid=frontpage_uid)
+
+        self.assertEqual('My Title', self.portal['front-page'].Title())
+
+    
     def testMarkerInATField(self):
         # writeable
         view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')

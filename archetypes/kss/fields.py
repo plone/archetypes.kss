@@ -55,12 +55,13 @@ class FieldsView(PloneKSSView):
     view_field_wrapper = ZopeTwoPageTemplateFile('browser/view_field_wrapper.pt')
     edit_field_wrapper = ZopeTwoPageTemplateFile('browser/edit_field_wrapper.pt')
 
-    def renderViewField(self, fieldname, templateId, macro):
+    def renderViewField(self, fieldname, templateId, macro, uid=None):
         """
         renders the macro coming from the view template
         """
-        context = aq_inner(self.context)
-        template = self.getTemplate(templateId)
+
+        context = self._getFieldContext(uid)
+        template = self.getTemplate(templateId, context)
 
         viewMacro = template.macros[macro]
         res = self.view_field_wrapper(viewMacro=viewMacro,
@@ -69,11 +70,14 @@ class FieldsView(PloneKSSView):
                                       fieldName=fieldname)
         return res
 
-    def getTemplate(self, templateId):
+    def getTemplate(self, templateId, context=None):
         """
         traverse/search template
         """
-        context = aq_inner(self.context)
+
+        if not context:
+            context = self.context
+
         template = context.restrictedTraverse(templateId)
         
         if IBrowserView.providedBy(template):
@@ -87,12 +91,13 @@ class FieldsView(PloneKSSView):
         return template
 
 
-    def renderEditField(self, fieldname, templateId, macro):
+    def renderEditField(self, fieldname, templateId, macro, uid=None):
         """
         renders the edit widget inside the macro coming from the view template
         """
-        context = aq_inner(self.context)
-        template = self.getTemplate(templateId)
+
+        context = self._getFieldContext(uid)
+        template = self.getTemplate(templateId, context)
         containingMacro = template.macros[macro]
         fieldname = fieldname.split('archetypes-fieldname-')[-1]
         field = context.getField(fieldname)
@@ -104,12 +109,13 @@ class FieldsView(PloneKSSView):
                                       field=field, instance=context,
                                       mode='edit',
                                       templateId=templateId)
+
         return res
 
 
     # XXX XXX TODO for 3.0.1: see if we really need edit at all or we can remoce it (ree)
 
-    def replaceField(self, fieldname, templateId, macro, uid=None, edit=False):
+    def replaceField(self, fieldname, templateId, macro, uid=None, target=None, edit=False):
         """
         kss commands to replace the field value by the edit widget
 
@@ -119,13 +125,9 @@ class FieldsView(PloneKSSView):
         ksscore = self.getCommandSet('core')
         zopecommands = self.getCommandSet('zope')
         plonecommands = self.getCommandSet('plone')
-        context = aq_inner(self.context)
-        if uid is not None:
-            rc = getToolByName(context, 'reference_catalog')
-            instance = rc.lookupObject(uid)
-        else:
-            deprecated(FieldsView, missing_uid_deprecation)
-            instance = context
+
+        instance = self._getFieldContext(uid)        
+
         if edit:
             locking = ILockable(instance)
             if locking:
@@ -142,37 +144,36 @@ class FieldsView(PloneKSSView):
 
         plonecommands.issuePortalMessage('')
 
-        parent_fieldname = "parent-fieldname-%s" % fieldname
-        html = self.renderEditField(fieldname, templateId, macro)
+        html = self.renderEditField(fieldname, templateId, macro, uid)
         html = html.strip()
-        ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), html)
-        ksscore.focus("#%s .firstToFocus" % parent_fieldname)
+
+        field_id = target or "parent-fieldname-%s" % fieldname
+        ksscore.replaceHTML(ksscore.getHtmlIdSelector(field_id), html)
+        ksscore.focus("#%s .firstToFocus" % field_id)
+
         return self.render()
 
-
-    def replaceWithView(self, fieldname, templateId, macro, uid=None, edit=False):
+    def replaceWithView(self, fieldname, templateId, macro, uid=None, target=None, edit=False):
         """
         kss commands to replace the edit widget by the field view
         """
-        context = aq_inner(self.context)
-        if uid is not None:
-            rc = getToolByName(context, 'reference_catalog')
-            instance = rc.lookupObject(uid)
-        else:
-            deprecated(FieldsView, missing_uid_deprecation)
-            instance = context
 
+        ksscore = self.getCommandSet('core')
+        
+        instance = self._getFieldContext(uid)        
         locking = ILockable(instance)
         if locking and locking.can_safely_unlock():
             locking.unlock()
-        parent_fieldname = "parent-fieldname-%s" % fieldname
-        html = self.renderViewField(fieldname, templateId, macro)
+
+        html = self.renderViewField(fieldname, templateId, macro, uid)
         html = html.strip()
-        ksscore = self.getCommandSet('core')
-        ksscore.replaceHTML(ksscore.getHtmlIdSelector(parent_fieldname), html)
+
+        field_id = target or "parent-fieldname-%s" % fieldname
+        ksscore.replaceHTML(ksscore.getHtmlIdSelector(field_id), html)
+
         return self.render()
 
-    def saveField(self, fieldname, value, templateId, macro, uid=None):
+    def saveField(self, fieldname, value, templateId, macro, uid=None, target=None):
         """
         This method saves the current value to the field. and returns the rendered
         view macro.
@@ -180,13 +181,7 @@ class FieldsView(PloneKSSView):
         # We receive a dict in value.
         #
 
-        if uid is not None:
-            rc = getToolByName(aq_inner(self.context), 'reference_catalog')
-            instance = rc.lookupObject(uid)
-        else:
-            deprecated(FieldsView, missing_uid_deprecation)
-            instance = aq_inner(self.context)
-
+        instance = self._getFieldContext(uid)        
         field = instance.getField(fieldname)
         value, kwargs = field.widget.process_form(instance, field, value)
         error = field.validate(value, instance, {})
@@ -202,7 +197,7 @@ class FieldsView(PloneKSSView):
             descriptor = lifecycleevent.Attributes(IPortalObject, fieldname)
             event.notify(ObjectEditedEvent(instance, descriptor))
             
-            return self.replaceWithView(fieldname, templateId, macro)
+            return self.replaceWithView(fieldname, templateId, macro, uid, target)
         else:
             if not error:
                 # XXX This should not actually happen...
@@ -211,6 +206,14 @@ class FieldsView(PloneKSSView):
             self.getCommandSet('atvalidation').issueFieldError(fieldname, error)
             return self.render()
 
+    def _getFieldContext(self, uid):
+        if uid is not None:
+            rc = getToolByName(aq_inner(self.context), 'reference_catalog')
+            return rc.lookupObject(uid)
+        else:
+            deprecated(FieldsView, missing_uid_deprecation)
+            return aq_inner(self.context)
+        
 class ATDocumentFieldsView(FieldsView):
 
     def isTableOfContentsEnabled(self):
@@ -220,21 +223,21 @@ class ATDocumentFieldsView(FieldsView):
             result = getTableContents()
         return result
 
-    def replaceField(self, fieldname, templateId, macro, uid=None, edit=False):
-        if fieldname == "text" and self.isTableOfContentsEnabled(): 
+    def replaceField(self, fieldname, templateId, macro, uid=None, target=None, edit=False):
+        if fieldname == "text" and self.isTableOfContentsEnabled():  
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="none")
-        FieldsView.replaceField(self, fieldname, templateId, macro, uid=uid, edit=edit)
+        FieldsView.replaceField(self, fieldname, templateId, macro, uid=uid, target=target, edit=edit)
         return self.render()
 
-    def replaceWithView(self, fieldname, templateId, macro, uid=None, edit=False):
-        FieldsView.replaceWithView(self, fieldname, templateId, macro, uid=uid, edit=edit)
+    def replaceWithView(self, fieldname, templateId, macro, uid=None, target=None, edit=False):
+        FieldsView.replaceWithView(self, fieldname, templateId, macro, uid=uid, target=target, edit=edit)
         if fieldname == "text" and self.isTableOfContentsEnabled(): 
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="block")
             self.getCommandSet('plone-legacy').createTableOfContents()
         return self.render()
     
-    def saveField(self, fieldname, value, templateId, macro):
-        FieldsView.saveField(self, fieldname, value, templateId, macro)
+    def saveField(self, fieldname, value, templateId, macro, uid=None, target=None):
+        FieldsView.saveField(self, fieldname, value, templateId, macro, uid, target)
         if fieldname == "text" and self.isTableOfContentsEnabled(): 
             self.getCommandSet('plone-legacy').createTableOfContents() 
             #manager = getMultiAdapter((self.context, self.request, self),
@@ -282,7 +285,7 @@ class ATFieldDecoratorView(BrowserView):
         suppress_preview = econtext.vars.get('suppress_preview', False)
         return kss_inline_editable and not suppress_preview
 
-    def getKssClasses(self, fieldname, templateId=None, macro=None):
+    def getKssClasses(self, fieldname, templateId=None, macro=None, target=None):
         context = aq_inner(self.context)
         field = context.getField(fieldname)
         # field can be None when widgets are used without fields
@@ -294,6 +297,8 @@ class ATFieldDecoratorView(BrowserView):
                 classstring += ' kssattr-templateId-%s' % templateId
             if macro is not None:
                 classstring += ' kssattr-macro-%s' % macro
+            if target is not None:
+                classstring += ' kssattr-target-%s' % target
             # XXX commented out to avoid macro showing up twice
             # not removed since it might be needed in a use case I forgot about
             # __gotcha
@@ -303,8 +308,8 @@ class ATFieldDecoratorView(BrowserView):
             classstring = ''
         return classstring
     
-    def getKssClassesInlineEditable(self, fieldname, templateId, macro=None):
-        classstring = self.getKssClasses(fieldname, templateId, macro)
+    def getKssClassesInlineEditable(self, fieldname, templateId, macro=None, target=None):
+        classstring = self.getKssClasses(fieldname, templateId, macro, target)
         if classstring:
             classstring += ' inlineEditable'
         return classstring

@@ -1,7 +1,6 @@
 <tal:block xmlns:tal="http://xml.zope.org/namespaces/tal"
            xmlns:metal="http://xml.zope.org/namespaces/metal"
            i18n:domain="plone">
-  <metal:block use-macro="here/global_defines/macros/defines"/>
   <tal:defines define="context nocall:options/context;
                        here nocall:options/context;
                        kssClassesView context/@@kss_field_decorator_view;
@@ -11,6 +10,9 @@
                        field python:context.getField(fieldName);
                        widget nocall:field/widget;
                        accessor python:field.getAccessor(context);">
+
+    <metal:block use-macro="here/global_defines/macros/defines"/>
+    
     <metal:viewMacro use-macro="options/viewMacro" />
   </tal:defines>
 </tal:block>
