@@ -6,7 +6,10 @@ archetypes.kss - 1.2dev Unreleased
 
     - ...
 
-archetypes.kss - 1.2-0.1 Released 2007-08-21
+archetypes.kss - 1.2-1 Released 2007-09-10
+
+    - UID refactoring for fields (inline editing) support
+      [mborch]
 
     - Make sure inline edit is not active in the versioning preview. 
       (fixes #6958). From now on, the kss_inline_editable
