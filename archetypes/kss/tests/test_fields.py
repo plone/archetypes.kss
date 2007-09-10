@@ -259,10 +259,11 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         rendered = obj.versions_history_form()
         soup = BeautifulSoup(rendered)
         # check that inline edit is not active, by looking at title
-        tag = soup.find('h1', id='parent-fieldname-title')
+        tag = soup.find(id='parent-fieldname-title')
         klass = tag['class']
         # just to check that we are looking at the right bit...
-        self.assert_('documentFirstHeading' in klass)
+        # XXX but this is no more, we can't check it
+        #self.assert_('documentFirstHeading' in klass)
         # ... and now see we are really not inline editable:
         self.assert_('inlineEditable' not in klass)
         self.assert_('kssattr-templateId-' not in klass)
