@@ -129,7 +129,7 @@ class FieldsView(PloneKSSView):
         instance = self._getFieldContext(uid)        
 
         if edit:
-            locking = ILockable(instance)
+            locking = ILockable(instance, None)
             if locking:
                 if not locking.can_safely_unlock():
                     selector = ksscore.getHtmlIdSelector('plone-lock-status')
@@ -161,7 +161,7 @@ class FieldsView(PloneKSSView):
         ksscore = self.getCommandSet('core')
         
         instance = self._getFieldContext(uid)        
-        locking = ILockable(instance)
+        locking = ILockable(instance, None)
         if locking and locking.can_safely_unlock():
             locking.unlock()
 
