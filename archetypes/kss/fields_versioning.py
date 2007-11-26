@@ -6,6 +6,7 @@ from interfaces import IVersionedFieldModifiedEvent
 from Products.CMFPlone.utils import base_hasattr
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFEditions.interfaces.IArchivist import ArchivistUnregisteredError
 
 # --
 # As a temporary solution, we start a new version after a field is 
@@ -26,7 +27,13 @@ def versionObjectBecauseFieldChanged(obj, view, event):
     if not base_hasattr(obj, 'version_id'):
         changed = True
     else:
-        changed = not pr.isUpToDate(obj, obj.version_id)
+        try:
+            changed = not pr.isUpToDate(obj, obj.version_id)
+        except ArchivistUnregisteredError:
+            # XXX: The object is not actually registered, but a
+            # version is set, perhaps it was imported, or versioning
+            # info was inappropriately destroyed
+            changed = True
 
     fieldnames = event.fieldnames
     txtfieldnames ='"%s"' % ('", "'.join(fieldnames), )
