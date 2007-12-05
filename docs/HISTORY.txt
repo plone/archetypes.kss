@@ -6,6 +6,10 @@ archetypes.kss - 1.2dev Unreleased
 
     - ...
 
+    - Fix #7236: Handle unregistered objects with a version id 
+      during inline edit.
+      [alecm]
+
 archetypes.kss - 1.2.3 Released 2007-11-08
 
     - prepare for release
