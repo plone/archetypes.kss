@@ -2,9 +2,7 @@ Changelog for archetypes.kss
 
     (name of developer listed in brackets)
 
-archetypes.kss - 1.2dev Unreleased
-
-    - ...
+archetypes.kss - 1.2.4 Released 2007-12-06
 
     - Fix #7236: Handle unregistered objects with a version id 
       during inline edit.
