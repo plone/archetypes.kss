@@ -2,6 +2,13 @@ Changelog for archetypes.kss
 
     (name of developer listed in brackets)
 
+archetypes.kss - 1.2.4.1 Released 2007-12-07
+
+    - Handle aborted versioning due to exceedingly 
+      large files.
+      (Fixes http://dev.plone.org/plone/ticket/7236)
+      [alecm]
+
 archetypes.kss - 1.2.4 Released 2007-12-06
 
     - Fix #7236: Handle unregistered objects with a version id 
