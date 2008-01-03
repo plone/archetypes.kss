@@ -6,6 +6,8 @@ archetypes.kss - 1.2dev Unreleased
 
     - ...
 
+archetypes.kss - 1.2.5 Released 2008-01-03
+
     - Changed 'saveField' to not require 'value' explicitly
       but to take it from the request if missing.
       This was done to support the use of 
