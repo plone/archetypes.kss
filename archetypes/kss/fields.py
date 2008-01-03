@@ -173,14 +173,15 @@ class FieldsView(PloneKSSView):
 
         return self.render()
 
-    def saveField(self, fieldname, value, templateId, macro, uid=None, target=None):
+    def saveField(self, fieldname, value=None, templateId=None, macro=None, uid=None, target=None):
         """
         This method saves the current value to the field. and returns the rendered
         view macro.
         """
-        # We receive a dict in value.
+        # We receive a dict or nothing in value.
         #
-
+        if value is None:
+            value = self.request.form.copy()
         instance = self._getFieldContext(uid)        
         field = instance.getField(fieldname)
         value, kwargs = field.widget.process_form(instance, field, value)

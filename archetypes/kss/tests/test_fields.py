@@ -96,7 +96,22 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
                              'kss_generic_macros', 'description-field-view')
         self.assertEqual('Woot a funky description!', self.portal['front-page'].Description())
 
-    # XXX this test would only run, if events are really listened (which they are not) 
+
+    def testSaveFieldWithValueFromRequest(self):
+        view = self.view
+        view.request.form['title'] = 'My Title'
+        view.request.form['description'] = 'Woot a funky description!'
+        result = view.saveField('title', None, 
+                                'kss_generic_macros', 'title-field-view')
+        self.assertEqual('My Title', self.portal['front-page'].Title())
+        res = view.saveField('description',
+                             None,
+                             'kss_generic_macros', 'description-field-view')
+        self.assertEqual('Woot a funky description!', 
+                         self.portal['front-page'].Description())
+
+    # XXX this test would only run, if events are really listened 
+    # (which they are not) 
     def _XXX_testSaveFieldWithVersioning(self):
         view = self.view
         component.provideHandler(field_modified_handler)

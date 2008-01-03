@@ -6,6 +6,13 @@ archetypes.kss - 1.2dev Unreleased
 
     - ...
 
+    - Changed 'saveField' to not require 'value' explicitly
+      but to take it from the request if missing.
+      This was done to support the use of 
+        saveField-kssSubmitForm: currentForm();
+      which is needed for multi-valued form variables.
+      [raphael]
+
 archetypes.kss - 1.2.4.1 Released 2007-12-07
 
     - Handle aborted versioning due to exceedingly 
