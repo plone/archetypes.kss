@@ -237,8 +237,14 @@ class ATDocumentFieldsView(FieldsView):
             self.getCommandSet('plone-legacy').createTableOfContents()
         return self.render()
     
-    def saveField(self, fieldname, value, templateId, macro, uid=None, target=None):
-        FieldsView.saveField(self, fieldname, value, templateId, macro, uid, target)
+    def saveField(self, fieldname, value=None, templateId=None, macro=None, uid=None, target=None):
+        FieldsView.saveField(self, fieldname,
+                value = value,
+                templateId = templateId,
+                macro = macro,
+                uid = uid,
+                target = target,
+                )
         if fieldname == "text" and self.isTableOfContentsEnabled(): 
             self.getCommandSet('plone-legacy').createTableOfContents() 
             #manager = getMultiAdapter((self.context, self.request, self),
