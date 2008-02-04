@@ -53,6 +53,6 @@ def versionObjectBecauseFieldChanged(obj, view, event):
         except FileTooLargeToVersionError:
             commands = view.getCommandSet('plone')
             commands.issuePortalMessage(
-        _("Changes Saved.  "
-          "Versioning for this file has been disabled because it is too large"),
-                                        msgtype="warn")
+                _("Changes Saved. Versioning for this file has been disabled "
+                  "because it is too large."),
+                msgtype="warn")

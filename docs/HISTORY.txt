@@ -4,7 +4,8 @@ Changelog for archetypes.kss
 
 archetypes.kss - 1.2dev Unreleased
 
-    - ...
+    - Fixed i18n markup in fields_versioning.py.
+      [hannosch]
 
 archetypes.kss - 1.2.5 Released 2008-01-03
 
