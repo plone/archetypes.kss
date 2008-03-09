@@ -6,6 +6,11 @@ archetypes.kss - 1.4dev Unreleased
 
     - ...
 
+archetypes.kss - 1.4-alpha1 Released 2008-03-09
+
+    - prepare for release
+      [ree]
+
 archetypes.kss - 1.2.6 Released 2008-01-03
 
     - Fixed i18n markup in fields_versioning.py.
