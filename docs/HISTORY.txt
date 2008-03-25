@@ -6,6 +6,11 @@ archetypes.kss - 1.4dev Unreleased
 
     - ...
 
+archetypes.kss - 1.4-rc1 Released 2008-03-25
+
+    - prepare for release
+      [ree]
+
 archetypes.kss - 1.4-alpha1 Released 2008-03-09
 
     - prepare for release
