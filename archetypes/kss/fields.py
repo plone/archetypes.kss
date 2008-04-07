@@ -185,7 +185,7 @@ class FieldsView(PloneKSSView):
         instance = self._getFieldContext(uid)        
         field = instance.getField(fieldname)
         value, kwargs = field.widget.process_form(instance, field, value)
-        error = field.validate(value, instance, {})
+        error = field.validate(value, instance, {}, REQUEST=self.request)
         if not error and field.writeable(instance):
             setField = field.getMutator(instance)
             setField(value, **kwargs)
