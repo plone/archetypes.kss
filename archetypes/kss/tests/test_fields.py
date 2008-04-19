@@ -281,8 +281,10 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         #self.assert_('documentFirstHeading' in klass)
         # ... and now see we are really not inline editable:
         self.assert_('inlineEditable' not in klass)
-        self.assert_('kssattr-templateId-' not in klass)
-        self.assert_('kssattr-macro-' not in klass)
+        # make sure the rest is still there or instant validation and possibly
+        # other stuff will fail
+        self.assert_('kssattr-templateId-' in klass)
+        self.assert_('kssattr-macro-' in klass)
 
 def test_suite():
     return unittest.TestSuite((

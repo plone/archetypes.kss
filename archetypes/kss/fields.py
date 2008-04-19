@@ -297,8 +297,7 @@ class ATFieldDecoratorView(BrowserView):
         field = context.getField(fieldname)
         # field can be None when widgets are used without fields
         # check whether field is valid
-        global_kss_inline_editable = self._global_kss_inline_editable()
-        if global_kss_inline_editable and field is not None and field.writeable(context):
+        if field is not None and field.writeable(context):
             classstring = ' kssattr-atfieldname-%s' % fieldname
             if templateId is not None:
                 classstring += ' kssattr-templateId-%s' % templateId
@@ -317,6 +316,7 @@ class ATFieldDecoratorView(BrowserView):
     
     def getKssClassesInlineEditable(self, fieldname, templateId, macro=None, target=None):
         classstring = self.getKssClasses(fieldname, templateId, macro, target)
-        if classstring:
+        global_kss_inline_editable = self._global_kss_inline_editable()
+        if global_kss_inline_editable and classstring:
             classstring += ' inlineEditable'
         return classstring
