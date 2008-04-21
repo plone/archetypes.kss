@@ -6,6 +6,15 @@ archetypes.kss - 1.4dev Unreleased
 
     - ...
 
+    - test on global_inline_editable should happen only in
+      getKssClassesInlineEditable()
+      Fixed disabling of inline editing
+      [fschulze]
+
+    - Some Archetypes-validators expect the request 
+      as a keyword argument. Fixes #8005.
+      [mborch]
+
 archetypes.kss - 1.4-rc1 Released 2008-03-25
 
     - prepare for release
