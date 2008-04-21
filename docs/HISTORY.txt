@@ -6,6 +6,8 @@ archetypes.kss - 1.4dev Unreleased
 
     - ...
 
+archetypes.kss - 1.4 Released 2008-04-21
+
     - test on global_inline_editable should happen only in
       getKssClassesInlineEditable()
       Fixed disabling of inline editing
