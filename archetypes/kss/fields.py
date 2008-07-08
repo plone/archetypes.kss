@@ -43,7 +43,7 @@ from utils import get_econtext
 
 missing_uid_deprecation = \
 "This view does not provide a KSS instance UID as required. Falling back to "
-"the global context on inline-editing will be removed in Plone 3.5. Please "
+"the global context on inline-editing will be removed in Plone 4.0. Please "
 "update your templates."
 
 class FieldsView(PloneKSSView):

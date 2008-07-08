@@ -4,7 +4,9 @@ Changelog for archetypes.kss
 
 archetypes.kss - 1.4dev Unreleased
 
-    - ...
+    - Adjusted deprecation warnings to point to Plone 4.0 instead of Plone 3.5
+      since we changed the version numbering again.
+      [hannosch]
 
 archetypes.kss - 1.4 Released 2008-04-21
 
