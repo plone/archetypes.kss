@@ -4,6 +4,10 @@ Changelog for archetypes.kss
 
 archetypes.kss - 1.4dev Unreleased
 
+    - Added check for site_property 'enable_inline_editing'. This is a global
+      setting which can still be overwritten with kss_inline_editable.
+      [fschulze]
+
     - Adjusted deprecation warnings to point to Plone 4.0 instead of Plone 3.5
       since we changed the version numbering again.
       [hannosch]

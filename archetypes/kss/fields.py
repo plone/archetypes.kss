@@ -30,7 +30,7 @@ from zope.interface import implements
 from zope import lifecycleevent, event
 from zope.publisher.interfaces.browser import IBrowserView
 
-from Acquisition import aq_inner
+from Acquisition import aq_inner, aq_base
 from Products.Archetypes.event import ObjectEditedEvent
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
@@ -268,7 +268,7 @@ class ATFieldDecoratorView(BrowserView):
         uid = aq_inner(self.context).UID()
         
         return "kssattr-atuid-%s" % uid
-    
+
     def _global_kss_inline_editable(self):
         """With a nasty although not unusual hack, we reach
         out to the caller template, and examine the global
@@ -285,12 +285,28 @@ class ATFieldDecoratorView(BrowserView):
             return True
         # kss_inline_editable can be set to false in a template, and this
         # will prohibit inline editing in the page
-        kss_inline_editable = econtext.vars.get('kss_inline_editable', True)
+        kss_inline_editable = econtext.vars.get('kss_inline_editable', None)
+        # check the setting in site properties
+        context = aq_inner(self.context)
+        portal_properties = getToolByName(context, 'portal_properties')
+        enable_inline_editing = None
+        if getattr(aq_base(portal_properties), 'site_properties', None) is not None:
+            site_properties = portal_properties.site_properties
+            if getattr(aq_base(site_properties), 'enable_inline_editing', None) is not None:
+                enable_inline_editing = site_properties.enable_inline_editing
+        # If none of these is set, we enable inline editing. The global
+        # site_property may be overwritten by the kss_inline_editable variable
+        if kss_inline_editable is None:
+            inline_editable = enable_inline_editing
+        else:
+            inline_editable = kss_inline_editable
+        if inline_editable is None:
+            inline_editable = True
         # In addition we also check suppress_preview.
         # suppress_preview is set by CMFEditions, when version preview is shown
         # This means inline editing should be disabled globally
         suppress_preview = econtext.vars.get('suppress_preview', False)
-        return kss_inline_editable and not suppress_preview
+        return inline_editable and not suppress_preview
 
     def getKssClasses(self, fieldname, templateId=None, macro=None, target=None):
         context = aq_inner(self.context)
