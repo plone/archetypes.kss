@@ -2,7 +2,7 @@ Changelog for archetypes.kss
 
     (name of developer listed in brackets)
 
-archetypes.kss - 1.4.1 Unreleased
+archetypes.kss - 1.4.1-jarn.1 Unsupported internal release
 
     - Added check for site_property 'enable_inline_editing'. This is a global
       setting which can still be overwritten with kss_inline_editable.
