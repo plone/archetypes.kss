@@ -71,6 +71,14 @@
         permission="cmf.ModifyPortalContent"
       />
 
+    <adapter
+        for="Products.Archetypes.interfaces.IBaseObject
+             zope.publisher.interfaces.http.IHTTPRequest"
+        provides="archetypes.kss.interfaces.IInlineEditingEnabled"
+        factory=".fields.InlineEditingEnabledView"
+        permission="zope2.View"
+      />
+
     <!-- field decorator (non-ajax) views -->
 
     <browser:page

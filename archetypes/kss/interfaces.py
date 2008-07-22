@@ -15,6 +15,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 
+from zope.interface import Interface
 from zope.component.interfaces import IObjectEvent
 
 # --
@@ -24,3 +25,7 @@ from zope.component.interfaces import IObjectEvent
 class IVersionedFieldModifiedEvent(IObjectEvent):
     """A field has been modified, versioning needed"""
 
+
+class IInlineEditingEnabled(Interface):
+    """A view which just returns True or False on call to indicate
+       whether inline editing should be enabled or not."""

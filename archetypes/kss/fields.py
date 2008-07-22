@@ -17,8 +17,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 #
-#from zope.component import getMultiAdapter
+
+# from zope.component import getMultiAdapter
 #from zope.viewlet.interfaces import IViewletManager
+from zope.component import queryMultiAdapter
+
+from archetypes.kss.interfaces import IInlineEditingEnabled
 
 from plone.app.kss.plonekssview import PloneKSSView
 from plone.app.kss.interfaces import IPloneKSSView
@@ -255,21 +259,11 @@ class ATDocumentFieldsView(FieldsView):
             #                                                    'plone.tableofcontents')
         return self.render()
 
-# --
-# (Non-ajax) browser view for decorating the field
-# --
 
-class ATFieldDecoratorView(BrowserView):
+class InlineEditingEnabledView(BrowserView):
+    implements(IInlineEditingEnabled)
 
-    def getKssUIDClass(self):
-        """
-        This method generates a class-name from the current context UID.
-        """
-        uid = aq_inner(self.context).UID()
-        
-        return "kssattr-atuid-%s" % uid
-
-    def _global_kss_inline_editable(self):
+    def __call__(self):
         """With a nasty although not unusual hack, we reach
         out to the caller template, and examine the global
         tal variable kss_inline_editable. If it is defined,
@@ -307,6 +301,28 @@ class ATFieldDecoratorView(BrowserView):
         # This means inline editing should be disabled globally
         suppress_preview = econtext.vars.get('suppress_preview', False)
         return inline_editable and not suppress_preview
+
+
+# --
+# (Non-ajax) browser view for decorating the field
+# --
+
+class ATFieldDecoratorView(BrowserView):
+
+    def getKssUIDClass(self):
+        """
+        This method generates a class-name from the current context UID.
+        """
+        uid = aq_inner(self.context).UID()
+        
+        return "kssattr-atuid-%s" % uid
+
+    def _global_kss_inline_editable(self):
+        inline_editing = queryMultiAdapter((self.context, self.request),
+                                           IInlineEditingEnabled)
+        if inline_editing is None:
+            return False
+        return inline_editing()
 
     def getKssClasses(self, fieldname, templateId=None, macro=None, target=None):
         context = aq_inner(self.context)

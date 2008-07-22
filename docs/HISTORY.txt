@@ -4,6 +4,10 @@ Changelog for archetypes.kss
 
 archetypes.kss - 1.4.1 Unreleased
 
+    - Using an adapter to determine whether inline editing is enabled, so
+      the default behaviour can easily be overridden.
+      [fschulze]
+
     - Added check for site_property 'enable_inline_editing'. This is a global
       setting which can still be overwritten with kss_inline_editable.
       [fschulze]
