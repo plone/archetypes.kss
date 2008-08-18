@@ -2,6 +2,7 @@ Changelog for archetypes.kss
 
     (name of developer listed in brackets)
 
+archetypes.kss - 1.4.2 Released 2008-08-18
 archetypes.kss - 1.4.1 Unreleased
 
     - Using an adapter to determine whether inline editing is enabled, so
