@@ -17,7 +17,7 @@
     <metal:block use-macro="here/global_defines/macros/defines"/>
     
     <metal:containingMacro use-macro="options/containingMacro"><metal:insideSlot fill-slot="inside">
-        <form tal:attributes="class string:field inlineForm enableUnloadProtection;
+        <form tal:attributes="class string:field inlineForm enableUnloadProtection enableUnlockProtection;
                               id string:kss-inlineform-$fieldName;">
           <metal:editWidget use-macro="options/widgetMacro" />
           <div class="formControls">
