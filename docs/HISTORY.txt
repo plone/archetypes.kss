@@ -6,6 +6,9 @@ archetypes.kss - 1.4dev Unreleased
 
     - ...
 
+    - Enable unlock on unload for inline edits.
+      [alecm]
+
 archetypes.kss - 1.4.2 Released 2008-08-18
 archetypes.kss - 1.4.1 Unreleased
 
