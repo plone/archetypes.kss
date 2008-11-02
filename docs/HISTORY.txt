@@ -2,9 +2,7 @@ Changelog for archetypes.kss
 
     (name of developer listed in brackets)
 
-archetypes.kss - 1.4dev Unreleased
-
-    - ...
+archetypes.kss - 1.4.3 Released 2008-11-02
 
     - Enable unlock on unload for inline edits.
       [alecm]
