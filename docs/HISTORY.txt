@@ -4,7 +4,9 @@ Changelog for archetypes.kss
 
 archetypes.kss - 1.4dev Unreleased
 
-    - ...
+    - Updated reference to IATDocument from Products.ATContentTypes to the
+      standard location in interfaces.
+      [hannosch]
 
 archetypes.kss - 1.4.3 Released 2008-11-02
 
