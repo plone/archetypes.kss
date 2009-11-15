@@ -4,6 +4,8 @@ Changelog for archetypes.kss
 
 archetypes.kss - 1.4dev Unreleased
 
+    - Fixed validation test to work with plone.app.blob files.
+
     - Updated reference to IATDocument from Products.ATContentTypes to the
       standard location.
       [hannosch]

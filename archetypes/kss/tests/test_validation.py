@@ -143,6 +143,9 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
         context = self.portal.testfile
         view = context.restrictedTraverse('kssValidateForm')
         # this form contains a file field that needs to be ignored. 
+        class MockUpload(object):
+            filename = 'foobar'
+        mock_upload = MockUpload()
         data = {'': 'A kiv\xc3\xa1lasztott elemek elt\xc3\xa1vol\xc3\xadt\xc3\xa1sa', 'allowDiscussion': 'None',
         'cmfeditions_save_new_version': 'false', 'contributors': [],
         'creators': ['ree'], 'description': '', 'description_text_format':
@@ -154,8 +157,7 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
         'expirationDate_ampm': '', 'expirationDate_day': '00',
         'expirationDate_hour': '00', 'expirationDate_minute': '00',
         'expirationDate_month': '00', 'expirationDate_year': '2006',
-        'fieldset': 'default', 'file_file':
-        '/home/ree/docs/canon_biztosito/melleklet.odt', 'id':
+        'fieldset': 'default', 'file_file': mock_upload, 'id':
         'file.2006-12-21.4001159106', 'language': 'Meghat\xc3\xa1rozatlan nyelv (a port\xc3\xa1l alap\xc3\xa9rtelmezett nyelve)', 'last_referer':
         'http://localhost:9888/new16/uacheckin.pdf/view?portal_status_message=Changes%20saved.',
         'relatedItems': [''], 'rights': '', 'rights_text_format': 'text/plain',
