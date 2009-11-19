@@ -1,14 +1,13 @@
 from setuptools import setup, find_packages
-import sys, os
+import os
 
-version = '1.4dev'
+version = '1.6.0a1'
 
 setup(name='archetypes.kss',
       version=version,
       description="KSS (Kinetic Style Sheets) for Archetypes",
-      long_description="""\
-""",
-      # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
+      long_description=open("README.txt").read() + "\n" +
+          open(os.path.join("docs", "HISTORY.txt")).read(),
       classifiers=[
         "Framework :: Plone",
         "Framework :: Zope2",
