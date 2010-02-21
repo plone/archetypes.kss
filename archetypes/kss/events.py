@@ -1,4 +1,3 @@
-
 from zope.component.interfaces import ObjectEvent
 from interfaces import IVersionedFieldModifiedEvent
 from zope.interface import implements
@@ -27,5 +26,3 @@ class VersionedFieldModifiedEvent(ObjectEvent):
 
 def fieldsModified(ob, *fieldnames):
     notify(VersionedFieldModifiedEvent(ob, *fieldnames))
-
-

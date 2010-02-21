@@ -1,18 +1,10 @@
-archetypes.kss Package Readme
-=============================
-
 Overview
---------
+========
 
 KSS (Kinetic Style Sheets) for Archetypes
 
 This product gives generic KSS support to Archetypes. It depends on the product
-"kss.core" and "kss.app.plone"
-
-Installation
-------------
-
-Compatible with Zope 2.10, and Plone 3.0 svn bundle. Also needs Archetypes svn trunk.
+"kss.core" and "plone.app.kss".
 
 Features implemented
 --------------------
@@ -37,16 +29,16 @@ Features implemented
      - Implement field validation for all the other field types.
 
      - There is a lingering UnicodeDecodeError during the rendering of document_view.
-	   UPDATE. The problem is related to Zope 2.10 and/or AT,
-	   but since I can't run AT trunk on Zope 2.9, I will need to provide a fix...
+       UPDATE. The problem is related to Zope 2.10 and/or AT,
+       but since I can't run AT trunk on Zope 2.9, I will need to provide a fix...
 
-	 - The popups for leaving the edit region are not hooked in. This means that sometimes
-	   the "do you want to leave the page" popup comes in where it should not be.
+     - The popups for leaving the edit region are not hooked in. This means that sometimes
+       the "do you want to leave the page" popup comes in where it should not be.
 
-	 - The loading of the kupu editor is done with a simple hack, it seems to
-	   be no clean way in javascript to find when the iframe has been loaded,
-	   some more complex hack is needed for this that works on all browsers
-	   and is reliable in all the cases.
+     - The loading of the kupu editor is done with a simple hack, it seems to
+       be no clean way in javascript to find when the iframe has been loaded,
+       some more complex hack is needed for this that works on all browsers
+       and is reliable in all the cases.
 
 KSS extensions defined for general purpose use
 ----------------------------------------------
@@ -56,4 +48,3 @@ KSS extensions defined for general purpose use
 - client action for submitting to an url
 
 - client action for submitting the current form
-

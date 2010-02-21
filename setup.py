@@ -11,7 +11,6 @@ setup(name='archetypes.kss',
       classifiers=[
         "Framework :: Plone",
         "Framework :: Zope2",
-        "Framework :: Zope3",
         "Programming Language :: Python",
         ],
       keywords='',
@@ -26,7 +25,4 @@ setup(name='archetypes.kss',
       install_requires=[
         'setuptools',
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
       )

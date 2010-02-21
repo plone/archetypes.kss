@@ -1,4 +1,3 @@
-
 from zope.component import adapter
 from kss.core.interfaces import IKSSView
 from interfaces import IVersionedFieldModifiedEvent

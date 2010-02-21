@@ -1,4 +1,3 @@
-
 import unittest, doctest
 
 def test_suite():

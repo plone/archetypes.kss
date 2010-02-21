@@ -1,4 +1,3 @@
-
 from zope.interface import Interface
 
 class IValidationCommands(Interface):

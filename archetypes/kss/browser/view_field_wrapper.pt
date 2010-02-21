@@ -12,7 +12,7 @@
                        accessor python:field.getAccessor(context);">
 
     <metal:block use-macro="here/global_defines/macros/defines"/>
-    
+
     <metal:viewMacro use-macro="options/viewMacro" />
   </tal:defines>
 </tal:block>
