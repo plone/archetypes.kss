@@ -1,11 +1,11 @@
-Changelog for archetypes.kss
-============================
+Changelog
+=========
 
-1.6.0a2 (unreleased)
+1.6.0b1 (unreleased)
 --------------------
 
-- Nothing changed yet.
-
+- Fixed test failure in testVersionPreviewIsNotInlineEditable.
+  [hannosch]
 
 1.6.0a1 (2009-11-19)
 --------------------

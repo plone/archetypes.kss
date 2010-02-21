@@ -275,16 +275,15 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         soup = BeautifulSoup(rendered)
         # check that inline edit is not active, by looking at title
         tag = soup.find(id='parent-fieldname-title')
-        klass = tag['class']
-        # just to check that we are looking at the right bit...
-        # XXX but this is no more, we can't check it
-        #self.assert_('documentFirstHeading' in klass)
-        # ... and now see we are really not inline editable:
-        self.assert_('inlineEditable' not in klass)
-        # make sure the rest is still there or instant validation and possibly
-        # other stuff will fail
-        self.assert_('kssattr-templateId-' in klass)
-        self.assert_('kssattr-macro-' in klass)
+        # the history form doesn't contain the title anymore
+        if tag is not None:
+            klass = tag['class']
+            # ... and now see we are really not inline editable:
+            self.assert_('inlineEditable' not in klass)
+            # make sure the rest is still there or instant validation and
+            # possibly other stuff will fail
+            self.assert_('kssattr-templateId-' in klass)
+            self.assert_('kssattr-macro-' in klass)
 
 def test_suite():
     return unittest.TestSuite((

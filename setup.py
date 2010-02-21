@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.6.0a2dev'
+version = '1.6.0b1'
 
 setup(name='archetypes.kss',
       version=version,
@@ -13,7 +13,6 @@ setup(name='archetypes.kss',
         "Framework :: Zope2",
         "Framework :: Zope3",
         "Programming Language :: Python",
-        "Topic :: Software Development :: Libraries :: Python Modules",
         ],
       keywords='',
       author='Plone Foundation',
