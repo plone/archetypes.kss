@@ -275,8 +275,10 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         soup = BeautifulSoup(rendered)
         # check that inline edit is not active, by looking at title
         tag = soup.find(id='parent-fieldname-title')
-        # the history form doesn't contain the title anymore
-        if tag is not None:
+        if tag is None:
+            self.fail("The version form doesn't contain the title anymore, see "
+                      "http://dev.plone.org/plone/ticket/10234.")
+        else:
             klass = tag['class']
             # ... and now see we are really not inline editable:
             self.assert_('inlineEditable' not in klass)
