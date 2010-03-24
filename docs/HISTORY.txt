@@ -4,7 +4,9 @@ Changelog
 1.6.0a3 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Made error message be a warning instead before the form has been submitted,
+  this causes less disruption in a form while editing.
+  [joelburton]
 
 
 1.6.0a2 (2010-03-09)
