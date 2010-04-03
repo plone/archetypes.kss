@@ -7,14 +7,17 @@ class ValidationCommands(CommandSet):
 
     __allow_access_to_unprotected_subobjects__ = 1
 
-    def issueFieldError(self, fieldname, error):
+    def issueFieldError(self, fieldname, error, warning_only=False):
         'Issue this error message for the field'
         context = aq_inner(self.context)
         ksscore = self.getCommandSet('core')
         selector = ksscore.getCssSelector('div#archetypes-fieldname-%s div.fieldErrorBox' % fieldname)
-        if error:
+        if error and not warning_only:
             ksscore.replaceInnerHTML(selector, error)
             errorklass = ' error'
+        elif error and warning_only:
+            ksscore.clearChildNodes(selector)
+            errorklass = ' error warning'
         else:
             ksscore.clearChildNodes(selector)
             errorklass = ''

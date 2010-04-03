@@ -65,7 +65,7 @@ class ValidationView(PloneKSSView):
         if isinstance(error, str):
             error = error.decode('utf', 'replace')
         # replace the error on the page
-        self.getCommandSet('atvalidation').issueFieldError(fieldname, error)
+        self.getCommandSet('atvalidation').issueFieldError(fieldname, error, warning_only=True)
         return self.render()
 
     # XXX full form validation
