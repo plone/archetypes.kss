@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.6.0a3 (unreleased)
+1.6.0a3 (2010-03-09)
 --------------------
 
 - Made error message be a warning instead before the form has been submitted,
