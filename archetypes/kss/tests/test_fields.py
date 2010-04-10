@@ -273,19 +273,15 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         obj.REQUEST.form['version_id'] = '0'
         rendered = obj.versions_history_form()
         soup = BeautifulSoup(rendered)
-        # check that inline edit is not active, by looking at title
-        tag = soup.find(id='parent-fieldname-title')
-        if tag is None:
-            self.fail("The version form doesn't contain the title anymore, see "
-                      "http://dev.plone.org/plone/ticket/10234.")
-        else:
-            klass = tag['class']
-            # ... and now see we are really not inline editable:
-            self.assert_('inlineEditable' not in klass)
-            # make sure the rest is still there or instant validation and
-            # possibly other stuff will fail
-            self.assert_('kssattr-templateId-' in klass)
-            self.assert_('kssattr-macro-' in klass)
+        # check that inline edit is not active, by looking at body text
+        tag = soup.find(id='parent-fieldname-text')
+        klass = tag['class']
+        # ... and now see we are really not inline editable:
+        self.assert_('inlineEditable' not in klass)
+        # make sure the rest is still there or instant validation and
+        # possibly other stuff will fail
+        self.assert_('kssattr-templateId-' in klass)
+        self.assert_('kssattr-macro-' in klass)
 
 def test_suite():
     return unittest.TestSuite((
