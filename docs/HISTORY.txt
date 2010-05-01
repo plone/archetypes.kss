@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.6.0a4 (Unreleased)
+1.6.0b1 (2010-05-01)
 --------------------
+
+- Check for inline editing status on an actual field in the content-core, not
+  title which is now rendered by hand.
+  [davisagli]
 
 1.6.0a3 (2010-03-09)
 --------------------

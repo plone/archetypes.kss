@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.6.0a4dev'
+version = '1.6.0b1'
 
 setup(name='archetypes.kss',
       version=version,
