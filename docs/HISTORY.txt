@@ -1,10 +1,11 @@
 Changelog
 =========
 
-1.6.0 (Unreleased)
+1.6.0 (2010-07-31)
 ------------------
 
-- No changes.
+- Calling it a 1.6.0 final, no changes since b1.
+  [esteele]
 
 1.6.0b1 (2010-05-01)
 --------------------
