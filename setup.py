@@ -24,5 +24,6 @@ setup(name='archetypes.kss',
       zip_safe=False,
       install_requires=[
         'setuptools',
+        'plone.uuid'
       ],
       )

@@ -44,6 +44,7 @@ from zope.deprecation import deprecated
 
 import events
 from utils import get_econtext
+from plone.uuid.interfaces import IUUID
 
 missing_uid_deprecation = \
 "This view does not provide a KSS instance UID as required. Falling back to "
@@ -313,7 +314,7 @@ class ATFieldDecoratorView(BrowserView):
         """
         This method generates a class-name from the current context UID.
         """
-        uid = aq_inner(self.context).UID()
+        uid = IUUID(aq_inner(self.context))
         
         return "kssattr-atuid-%s" % uid
 
