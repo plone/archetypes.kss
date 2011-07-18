@@ -4,6 +4,14 @@ Changelog
 1.7.1 (Unreleased)
 ------------------
 
+- The change r12412 in 1.6.0a3 introduced a regression,
+  the field inline validating error message was not shown to the user.
+  The error message is not always the "required field" message, so it's
+  problematic to not show the error message in all cases.
+  The warning_only parameter is now set to False in the issueFieldError call so
+  the error message appears again.
+  [vincentfretin]
+
 1.7.0 (2011-01-03)
 ------------------
 
