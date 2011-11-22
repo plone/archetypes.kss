@@ -18,6 +18,7 @@
 #
 
 import unittest
+import re
 from Products.PloneTestCase import PloneTestCase
 from plone.app.kss.tests.kss_and_plone_layer import KSSAndPloneTestCase
 from zope import component
@@ -274,7 +275,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         rendered = obj.versions_history_form()
         soup = BeautifulSoup(rendered)
         # check that inline edit is not active, by looking at body text
-        tag = soup.find(id='parent-fieldname-text')
+        tag = soup.find(id=re.compile('parent-fieldname-text-*'))
         klass = tag['class']
         # ... and now see we are really not inline editable:
         self.assert_('inlineEditable' not in klass)
