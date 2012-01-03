@@ -41,10 +41,10 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
     def testValidateFormWithEvents(self):
         """Test validating a form works with events
         """
-        # Set up a view 
+        # Set up a view
         context = self.portal.testdoc
         view = context.restrictedTraverse('kssValidateForm')
-        # this form contains a file field that needs to be ignored. 
+        # this form contains a file field that needs to be ignored.
         data = {'': 'A kiv\xc3\xa1lasztott elemek elt\xc3\xa1vol\xc3\xadt\xc3\xa1sa', 'allowDiscussion': 'None',
             'cmfeditions_save_new_version': 'false', 'contributors': [],
             'creators': ['ree'], 'description': '', 'description_text_format':
@@ -62,16 +62,16 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
             'http://localhost:9888/new16/uacheckin.pdf/view?portal_status_message=Changes%20saved.',
             'relatedItems': [''], 'rights': '', 'rights_text_format': 'text/plain',
             'subject_existing_keywords': [''], 'subject_keywords': [], 'title': 'The new title'}
-            
+
         result = view.kssValidateForm(data)
-        
+
     def testValidateForm(self):
         """Test validating a form works
         """
-        # Set up a view 
+        # Set up a view
         context = self.portal.testdoc
         view = context.restrictedTraverse('kssValidateForm')
-        # this form contains a file field that needs to be ignored. 
+        # this form contains a file field that needs to be ignored.
         data = {'': 'A kiv\xc3\xa1lasztott elemek elt\xc3\xa1vol\xc3\xadt\xc3\xa1sa', 'allowDiscussion': 'None',
             'cmfeditions_save_new_version': 'false', 'contributors': [],
             'creators': ['ree'], 'description': '', 'description_text_format':
@@ -88,11 +88,11 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
             'file.2006-12-21.4001159106', 'language': 'Meghat\xc3\xa1rozatlan nyelv(a port\xc3\xa1l alap\xc3\xa9rtelmezett nyelve)', 'last_referer':
             'http://localhost:9888/new16/uacheckin.pdf/view?portal_status_message=Changes%20saved.',
             'relatedItems': [''], 'rights': '', 'rights_text_format': 'text/plain',
-            'subject_existing_keywords': [''], 'subject_keywords': [], 'title': 'The new title', 
+            'subject_existing_keywords': [''], 'subject_keywords': [], 'title': 'The new title',
             'text': 'XXX'}
-            
+
         result = view.kssValidateForm(data)
-        
+
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
                 ('plone-submitCurrentForm', '', 'samenode'),
@@ -101,10 +101,10 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
     def testValidateFormFailed(self):
         """Test validating a form works, with the title field not validatiing
         """
-        # Set up a view 
+        # Set up a view
         context = self.portal.testdoc
         view = context.restrictedTraverse('kssValidateForm')
-        # this form contains a file field that needs to be ignored. 
+        # this form contains a file field that needs to be ignored.
         data = {'': 'A kiv\xc3\xa1lasztott elemek elt\xc3\xa1vol\xc3\xadt\xc3\xa1sa', 'allowDiscussion': 'None',
             'cmfeditions_save_new_version': 'false', 'contributors': [],
             'creators': ['ree'], 'description': '', 'description_text_format':
@@ -122,9 +122,9 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
             'http://localhost:9888/new16/uacheckin.pdf/view?portal_status_message=Changes%20saved.',
             'relatedItems': [''], 'rights': '', 'rights_text_format': 'text/plain',
             'subject_existing_keywords': [''], 'subject_keywords': [], 'title': '', 'text': 'XXX'}
-        
+
         result = view.kssValidateForm(data)
-        
+
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
                  ('setStyle', '.portalMessage', 'css'),
@@ -132,17 +132,17 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
                  ('setAttribute', 'kssPortalMessage', 'htmlid'),
                  ('setStyle', 'kssPortalMessage', 'htmlid'),
                  ('clearChildNodes', 'div.field div.fieldErrorBox', 'css'),
-                 ('replaceInnerHTML', 'div#archetypes-fieldname-title div.fieldErrorBox', 'css'), 
+                 ('replaceInnerHTML', 'div#archetypes-fieldname-title div.fieldErrorBox', 'css'),
                  ('setAttribute', 'archetypes-fieldname-title', 'htmlid'),
             ])
 
     def testValidateFormWithUploads(self):
         """Test validating a form works with uploads
         """
-        # Set up a view 
+        # Set up a view
         context = self.portal.testfile
         view = context.restrictedTraverse('kssValidateForm')
-        # this form contains a file field that needs to be ignored. 
+        # this form contains a file field that needs to be ignored.
         class MockUpload(object):
             filename = 'foobar'
         mock_upload = MockUpload()
@@ -162,9 +162,9 @@ class ValidationViewTestCase(KSSAndPloneTestCase):
         'http://localhost:9888/new16/uacheckin.pdf/view?portal_status_message=Changes%20saved.',
         'relatedItems': [''], 'rights': '', 'rights_text_format': 'text/plain',
         'subject_existing_keywords': [''], 'subject_keywords': [], 'title': 'New title'}
-        
+
         result = view.kssValidateForm(data)
-        
+
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
                 ('plone-submitCurrentForm', '', 'samenode'),

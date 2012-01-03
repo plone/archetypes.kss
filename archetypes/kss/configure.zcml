@@ -5,7 +5,7 @@
            >
 
     <!-- Include command macro definitions -->
-    <include package=".commands"/> 
+    <include package=".commands"/>
 
     <browser:page
         for="Products.Archetypes.interfaces.IBaseObject"
@@ -22,7 +22,7 @@
         name="kssValidateForm"
         permission="cmf.ModifyPortalContent"
         />
-        
+
     <browser:page
         for="Products.Archetypes.interfaces.IBaseObject"
         class=".fields.FieldsView"

@@ -52,11 +52,11 @@ missing_uid_deprecation = \
 "update your templates."
 
 class FieldsView(PloneKSSView):
-    
+
     implements(IPloneKSSView)
 
     ## KSS methods
-   
+
     view_field_wrapper = ZopeTwoPageTemplateFile('browser/view_field_wrapper.pt')
     edit_field_wrapper = ZopeTwoPageTemplateFile('browser/edit_field_wrapper.pt')
 
@@ -84,7 +84,7 @@ class FieldsView(PloneKSSView):
             context = self.context
 
         template = context.restrictedTraverse(templateId)
-        
+
         if IBrowserView.providedBy(template):
             view = template
             for attr in ('index', 'template', '__call__'):
@@ -108,7 +108,7 @@ class FieldsView(PloneKSSView):
         field = context.getField(fieldname)
         widget = field.widget
         widgetMacro = widget('edit', context)
-        
+
         res = self.edit_field_wrapper(containingMacro=containingMacro,
                                       widgetMacro=widgetMacro,
                                       field=field, instance=context,
@@ -131,7 +131,7 @@ class FieldsView(PloneKSSView):
         zopecommands = self.getCommandSet('zope')
         plonecommands = self.getCommandSet('plone')
 
-        instance = self._getFieldContext(uid)        
+        instance = self._getFieldContext(uid)
 
         if edit:
             locking = ILockable(instance, None)
@@ -164,8 +164,8 @@ class FieldsView(PloneKSSView):
         """
 
         ksscore = self.getCommandSet('core')
-        
-        instance = self._getFieldContext(uid)        
+
+        instance = self._getFieldContext(uid)
         locking = ILockable(instance, None)
         if locking and locking.can_safely_unlock():
             locking.unlock()
@@ -187,7 +187,7 @@ class FieldsView(PloneKSSView):
         #
         if value is None:
             value = self.request.form.copy()
-        instance = self._getFieldContext(uid)        
+        instance = self._getFieldContext(uid)
         field = instance.getField(fieldname)
         value, kwargs = field.widget.process_form(instance, field, value)
         error = field.validate(value, instance, {}, REQUEST=self.request)
@@ -202,7 +202,7 @@ class FieldsView(PloneKSSView):
 
             descriptor = lifecycleevent.Attributes(IPortalObject, fieldname)
             event.notify(ObjectEditedEvent(instance, descriptor))
-            
+
             return self.replaceWithView(fieldname, templateId, macro, uid, target)
         else:
             if not error:
@@ -219,7 +219,7 @@ class FieldsView(PloneKSSView):
         else:
             deprecated(FieldsView, missing_uid_deprecation)
             return aq_inner(self.context)
-        
+
 class ATDocumentFieldsView(FieldsView):
 
     def isTableOfContentsEnabled(self):
@@ -230,18 +230,18 @@ class ATDocumentFieldsView(FieldsView):
         return result
 
     def replaceField(self, fieldname, templateId, macro, uid=None, target=None, edit=False):
-        if fieldname == "text" and self.isTableOfContentsEnabled():  
+        if fieldname == "text" and self.isTableOfContentsEnabled():
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="none")
         FieldsView.replaceField(self, fieldname, templateId, macro, uid=uid, target=target, edit=edit)
         return self.render()
 
     def replaceWithView(self, fieldname, templateId, macro, uid=None, target=None, edit=False):
         FieldsView.replaceWithView(self, fieldname, templateId, macro, uid=uid, target=target, edit=edit)
-        if fieldname == "text" and self.isTableOfContentsEnabled(): 
+        if fieldname == "text" and self.isTableOfContentsEnabled():
             self.getCommandSet('core').setStyle("#document-toc", name="display", value="block")
             self.getCommandSet('plone-legacy').createTableOfContents()
         return self.render()
-    
+
     def saveField(self, fieldname, value=None, templateId=None, macro=None, uid=None, target=None):
         FieldsView.saveField(self, fieldname,
                 value = value,
@@ -250,8 +250,8 @@ class ATDocumentFieldsView(FieldsView):
                 uid = uid,
                 target = target,
                 )
-        if fieldname == "text" and self.isTableOfContentsEnabled(): 
-            self.getCommandSet('plone-legacy').createTableOfContents() 
+        if fieldname == "text" and self.isTableOfContentsEnabled():
+            self.getCommandSet('plone-legacy').createTableOfContents()
             #manager = getMultiAdapter((self.context, self.request, self),
             #                          IViewletManager,
             #                          name='plone.abovecontentbody')
@@ -315,7 +315,7 @@ class ATFieldDecoratorView(BrowserView):
         This method generates a class-name from the current context UID.
         """
         uid = IUUID(aq_inner(self.context))
-        
+
         return "kssattr-atuid-%s" % uid
 
     def _global_kss_inline_editable(self):
@@ -346,7 +346,7 @@ class ATFieldDecoratorView(BrowserView):
         else:
             classstring = ''
         return classstring
-    
+
     def getKssClassesInlineEditable(self, fieldname, templateId, macro=None, target=None):
         classstring = self.getKssClasses(fieldname, templateId, macro, target)
         global_kss_inline_editable = self._global_kss_inline_editable()

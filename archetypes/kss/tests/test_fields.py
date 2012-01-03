@@ -41,7 +41,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         self.setDebugRequest()
         self.loginAsPortalOwner()
         context = self.portal['front-page']
-        # Set up a view 
+        # Set up a view
         self.view = context.restrictedTraverse('saveField')
 
     # --
@@ -73,7 +73,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
     # but we have no more method for that
     def testSaveField(self):
         view = self.view
-        result = view.saveField('title', {'title':'My Title'}, 
+        result = view.saveField('title', {'title':'My Title'},
                                 'kss_generic_macros', 'title-field-view')
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
@@ -84,12 +84,12 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
                              {'description':'Woot a funky description!'},
                              'kss_generic_macros', 'description-field-view')
         self.assertEqual('Woot a funky description!', self.portal['front-page'].Description())
-    
+
 
     # XXX note how these tests are wwrong, obviously events are not listened in this setup
     def testSaveFieldWithEvents(self):
         view = self.view
-        result = view.saveField('title', {'title':'My Title'}, 
+        result = view.saveField('title', {'title':'My Title'},
                                 'kss_generic_macros', 'title-field-view')
         self.assertEqual('My Title', self.portal['front-page'].Title())
         res = view.saveField('description',
@@ -102,22 +102,22 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
         view = self.view
         view.request.form['title'] = 'My Title'
         view.request.form['description'] = 'Woot a funky description!'
-        result = view.saveField('title', None, 
+        result = view.saveField('title', None,
                                 'kss_generic_macros', 'title-field-view')
         self.assertEqual('My Title', self.portal['front-page'].Title())
         res = view.saveField('description',
                              None,
                              'kss_generic_macros', 'description-field-view')
-        self.assertEqual('Woot a funky description!', 
+        self.assertEqual('Woot a funky description!',
                          self.portal['front-page'].Description())
 
-    # XXX this test would only run, if events are really listened 
-    # (which they are not) 
+    # XXX this test would only run, if events are really listened
+    # (which they are not)
     def _XXX_testSaveFieldWithVersioning(self):
         view = self.view
         component.provideHandler(field_modified_handler)
         try:
-            res = view.saveField('title', {'title':'My Title'}, 
+            res = view.saveField('title', {'title':'My Title'},
                                     'kss_generic_macros', 'title-field-view')
             self.assert_(getattr(view.context, '_eventCaught', False))
             view.context._eventCaught = False
@@ -133,7 +133,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
     # is not currently in use in any templates -- we provide a target node id of
     # 'parent-fieldname-title' which is the default anyway -- but the tests make sure
     # this api extension work to some degree.
-    
+
     def testReplaceFieldWithProvidedTargetNodeId(self):
         self.view.context.changeSkin('Plone Default', self.view.request)
         target = 'parent-fieldname-title'
@@ -160,7 +160,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
     def testSaveFieldWithProvidedTargetNodeId(self):
         view = self.view
         target = 'parent-fieldname-title'
-        result = view.saveField('title', {'title':'My Title'}, 
+        result = view.saveField('title', {'title':'My Title'},
                                 'kss_generic_macros', 'title-field-view', target=target)
         self.assertEqual([(r['name'], r['selector'], r['selectorType'])
                              for r in result], [
@@ -189,7 +189,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
 
         # make sure we've got the right context:
         replaceHTML = ''.join([r['params'].get('html', '') for r in result])
-        self.assertEqual(u"Welcome to Plone" in replaceHTML, True)       
+        self.assertEqual(u"Welcome to Plone" in replaceHTML, True)
 
     def testReplaceWithViewWithProvidedContext(self):
         # set the global context to /news
@@ -207,7 +207,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
 
         # make sure we've got the right context:
         replaceHTML = ''.join([r['params'].get('html', '') for r in result])
-        self.assertEqual(u"Welcome to Plone" in replaceHTML, True)       
+        self.assertEqual(u"Welcome to Plone" in replaceHTML, True)
 
     def testSaveFieldWithProvidedContext(self):
         # set the global context to /news
@@ -221,7 +221,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
 
         self.assertEqual('My Title', self.portal['front-page'].Title())
 
-    
+
     def testMarkerInATField(self):
         # writeable
         view = self.portal['front-page'].restrictedTraverse('kss_field_decorator_view')
@@ -257,7 +257,7 @@ class FieldsViewTestCase(KSSAndPloneTestCase):
 
     def testVersionPreviewIsNotInlineEditable(self):
         """If the kss_inline_editable variable is defined to False
-        in a page template, all the fields will be globally prohibited 
+        in a page template, all the fields will be globally prohibited
         to be editable. This works via the getKssClasses method.
         Similarly, is suppress_preview is set to true, inline
         editing is prohibited. This is set from CMFEditions, in the

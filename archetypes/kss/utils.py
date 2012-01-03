@@ -6,7 +6,7 @@ import inspect
 
 class FrameError(Exception):
     pass
-    
+
 def get_econtext():
     '''Inspects full context of the caller page
 
@@ -19,15 +19,15 @@ def get_econtext():
 
     We walk up the the python expression stack until we find the
     Pagetemplates.ZRPythonExpr.__call__ that has econtext
-    in the locals. The econtext is a 
-    <Products.PageTemplates.Expressions.ZopeContext object that has: 
+    in the locals. The econtext is a
+    <Products.PageTemplates.Expressions.ZopeContext object that has:
 
         vars:           global and local variables combined, readonly.
 
         setLocal:       set local context variable
 
         setGlobal:      set global context variable
-    
+
     '''
     frame = inspect.currentframe().f_back
     econtext = None
@@ -41,7 +41,7 @@ def get_econtext():
             else:
                 # found
                 return econtext
-        else: 
+        else:
             # Econtext frame not found
             return None
     finally:

@@ -9,8 +9,8 @@ from Products.CMFEditions.interfaces.IArchivist import ArchivistUnregisteredErro
 from Products.CMFEditions.interfaces.IModifier import FileTooLargeToVersionError
 
 # --
-# As a temporary solution, we start a new version after a field is 
-# instant edited. This is done similarly as on the formcontroller hook. 
+# As a temporary solution, we start a new version after a field is
+# instant edited. This is done similarly as on the formcontroller hook.
 # This hook, Products/CMFEditions/skins/update_version_on_edit.py, is
 # set up from  Products/CMFEditions/VersionPolicies.py.
 # --
@@ -22,7 +22,7 @@ def versionObjectBecauseFieldChanged(obj, view, event):
 
     pr = getToolByName(view.context, 'portal_repository')
     isVersionable = pr.isVersionable(obj)
-    
+
     changed = False
     if not base_hasattr(obj, 'version_id'):
         changed = True
@@ -37,9 +37,9 @@ def versionObjectBecauseFieldChanged(obj, view, event):
 
     fieldnames = event.fieldnames
     txtfieldnames ='"%s"' % ('", "'.join(fieldnames), )
-    # XXX I am not sure we actually want to translate _here_, but 
+    # XXX I am not sure we actually want to translate _here_, but
     # at the moment this seems to be the best policy.
-    comment_msg = _('Instant edited field(s) ${fields}' , 
+    comment_msg = _('Instant edited field(s) ${fields}' ,
                     mapping=dict(fields=txtfieldnames))
     # XXX unicode is not possible here?
     comment = view.context.translate(comment_msg)

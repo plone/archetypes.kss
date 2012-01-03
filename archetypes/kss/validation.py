@@ -40,7 +40,7 @@ missing_uid_deprecation = \
 class ValidationView(PloneKSSView):
 
     implements(IPloneKSSView)
-    
+
     # --
     # Kss methods
     # --
@@ -128,7 +128,7 @@ def validate(self, instance=None, REQUEST=None,
     if fieldset is not None:
         schemata = instance.Schemata()
         fields = [(field.getName(), field)
-                  for field in schemata[fieldset].fields() 
+                  for field in schemata[fieldset].fields()
                       if not [pred for pred in predicates if not pred(field)]
                  ]
 
