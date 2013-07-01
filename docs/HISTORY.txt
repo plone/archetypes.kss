@@ -4,7 +4,12 @@ Changelog
 1.7.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- On KSS Validation, pass REQUEST to validate method.
+  Without it, it can happen that the language negociator chooses
+  a different language for error messages than the regular form validation.
+  This can result in error messages in different languages for kss
+  and normal form validation.
+  [do3cc]
 
 
 1.7.2 (2012-05-25)

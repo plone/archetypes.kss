@@ -60,7 +60,7 @@ class ValidationView(PloneKSSView):
         field = instance.getField(fieldname)
         if field.type in SKIP_KSSVALIDATION_FIELDTYPES:
             return self.render()
-        error = field.validate(value, instance, {})
+        error = field.validate(value, instance, {}, REQUEST=self.request)
         # XXX
         if isinstance(error, str):
             error = error.decode('utf', 'replace')
